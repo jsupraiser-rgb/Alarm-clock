@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChronoAlarm - Smart Alarm & Timer</title>
+    <title>SmartAlarm - Sleep & Wake System</title>
     <style>
         :root {
             --bg-color: #0f172a;
@@ -26,7 +26,7 @@
         .container {
             width: 100%;
             max-width: 400px;
-            padding-bottom: 50px;
+            padding-bottom: 60px;
         }
         .top-header {
             display: flex;
@@ -58,30 +58,30 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.4);
         }
         .time-text {
-            font-size: 3rem;
+            font-size: 2.8rem;
             font-weight: bold;
             color: var(--accent-gold);
             letter-spacing: 2px;
         }
         .date-text {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #94a3b8;
             margin-top: 4px;
         }
         .tabs {
-            display: flex;
-            gap: 8px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px;
             margin-bottom: 16px;
         }
         .tab-btn {
-            flex: 1;
-            padding: 10px;
+            padding: 8px 4px;
             background-color: #1e293b;
             border: 1px solid var(--border-color);
             color: #94a3b8;
-            border-radius: 10px;
+            border-radius: 8px;
             font-weight: bold;
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             cursor: pointer;
             text-align: center;
         }
@@ -119,7 +119,7 @@
             background-color: #090d16;
             color: var(--text-color);
             box-sizing: border-box;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             outline: none;
         }
         .action-btn {
@@ -144,12 +144,12 @@
             align-items: center;
             border: 1px solid var(--border-color);
         }
-        /* Alarm Ringing Modal / Overlay */
+        /* Alarm Ringing Mission Modal */
         .modal {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.95);
+            background: rgba(15, 23, 42, 0.98);
             justify-content: center;
             align-items: center;
             z-index: 2000;
@@ -164,7 +164,7 @@
 
 <div class="container">
     <div class="top-header">
-        <h1 id="appTitle">ChronoAlarm</h1>
+        <h1 id="appTitle">SmartAlarm</h1>
         <select id="langSelect" class="lang-select" onchange="changeLanguage(this.value)">
             <option value="en">English</option>
             <option value="hi">हिंदी</option>
@@ -181,25 +181,58 @@
     <!-- Navigation Tabs -->
     <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('alarms', this)" id="tabAlarmBtn">Alarms</button>
+        <button class="tab-btn" onclick="switchTab('soundscapes', this)" id="tabSoundsBtn">Soundscapes</button>
         <button class="tab-btn" onclick="switchTab('stopwatch', this)" id="tabStopwatchBtn">Stopwatch</button>
     </div>
 
-    <!-- TAB 1: ALARMS -->
+    <!-- TAB 1: ALARMS & MISSIONS -->
     <div id="tab-alarms" class="tab-content active">
         <div class="box">
             <label id="lblSetAlarm">Set New Alarm</label>
             <input type="time" id="alarmTimeInput" required>
+            
             <label id="lblAlarmLabel">Alarm Label</label>
             <input type="text" id="alarmLabelInput" placeholder="e.g. Morning Workout">
-            <button class="action-btn" onclick="addAlarm()" id="addAlarmBtn">Add Alarm</button>
+
+            <label id="lblSoundChoice">Alarm Sound</label>
+            <select id="alarmSoundSelect">
+                <option value="gentle">Gentle Chime (Fade-In)</option>
+                <option value="birds">Nature Birds</option>
+                <option value="loud">Loud Siren (Heavy Sleeper)</option>
+                <option value="airhorn">Extreme Air Horn</option>
+            </select>
+
+            <label id="lblMissionChoice">Wake-Up Mission</label>
+            <select id="alarmMissionSelect">
+                <option value="math">Math Puzzle Challenge</option>
+                <option value="shake">Shake-to-Wake (30 Shakes)</option>
+                <option value="type">Typing Verification</option>
+            </select>
+
+            <button class="action-btn" onclick="addAlarm()" id="addAlarmBtn">Add Smart Alarm</button>
         </div>
         <div id="alarmListContainer"></div>
     </div>
 
-    <!-- TAB 2: STOPWATCH -->
+    <!-- TAB 2: SLEEP SOUNDSCAPES -->
+    <div id="tab-soundscapes" class="tab-content">
+        <div class="box" style="text-align: center;">
+            <h3 style="color: var(--accent-gold); margin-top:0;" id="lblSoundscapeTitle">Relaxing White Noise</h3>
+            <p style="color: #94a3b8; font-size: 0.85rem;" id="lblSoundscapeDesc">Fall asleep faster with ambient audio tracks.</p>
+            <select id="whiteNoiseSelect" style="margin-bottom: 15px;">
+                <option value="rain">🌧️ Gentle Rain</option>
+                <option value="ocean">🌊 Ocean Waves</option>
+                <option value="fan">🌀 Sleeping Fan</option>
+                <option value="forest">🌲 Forest Night</option>
+            </select>
+            <button class="action-btn" onclick="toggleWhiteNoise()" id="noiseToggleBtn" style="background:#34d399; color:#0f172a;">Play Soundscape</button>
+        </div>
+    </div>
+
+    <!-- TAB 3: STOPWATCH WITH MILLISECONDS -->
     <div id="tab-stopwatch" class="tab-content">
         <div class="box" style="text-align: center;">
-            <div style="font-size: 2.5rem; font-weight: bold; color: var(--accent-gold); margin: 15px 0;" id="stopwatchDisplay">00:00:00</div>
+            <div style="font-size: 2.2rem; font-weight: bold; color: var(--accent-gold); margin: 15px 0; letter-spacing: 1px;" id="stopwatchDisplay">00:00:00.000</div>
             <div style="display: flex; gap: 8px;">
                 <button class="action-btn" onclick="startStopwatch()" id="swStartBtn" style="background:#34d399; color:#0f172a;">Start</button>
                 <button class="action-btn" onclick="pauseStopwatch()" id="swPauseBtn" style="background:#fbbf24; color:#0f172a;">Pause</button>
@@ -209,66 +242,81 @@
     </div>
 </div>
 
-<!-- MATH PUZZLE WAKE-UP MODAL -->
+<!-- MISSION WAKE-UP MODAL -->
 <div id="alarmModal" class="modal">
-    <h2 style="color: var(--accent-red); font-size: 2rem; margin-bottom: 10px;" id="modalAlarmAlert">🚨 ALARM RINGING! 🚨</h2>
-    <p style="color: #94a3b8; margin-bottom: 20px;" id="modalPuzzleInstruction">Solve this math puzzle to dismiss the alarm:</p>
-    <div style="font-size: 1.8rem; font-weight: bold; color: var(--accent-gold); margin-bottom: 15px;" id="mathProblem">5 + 3 = ?</div>
-    <input type="number" id="mathAnswerInput" placeholder="Enter answer" style="max-width: 250px; text-align: center; font-size: 1.2rem;">
-    <button class="action-btn" style="max-width: 250px; background-color: var(--accent-green); color: #0f172a;" onclick="verifyMathAnswer()" id="dismissBtn">Dismiss Alarm</button>
+    <h2 style="color: var(--accent-red); font-size: 2rem; margin-bottom: 10px;" id="modalAlarmAlert">🚨 SMART ALARM RINGING! 🚨</h2>
+    <p style="color: #94a3b8; margin-bottom: 20px;" id="modalMissionInstruction">Complete your wake-up mission to dismiss:</p>
+    
+    <div id="missionContainer" style="width: 100%; max-width: 300px; margin-bottom: 15px;">
+        <!-- Dynamic Mission Content -->
+    </div>
+
+    <button class="action-btn" style="max-width: 250px; background-color: var(--accent-green); color: #0f172a; display:none;" onclick="verifyMission()" id="dismissMissionBtn">Submit & Dismiss</button>
 </div>
 
 <script>
-    let currentLang = localStorage.getItem('alarm_lang') || 'en';
+    let currentLang = localStorage.getItem('smart_alarm_lang') || 'en';
     document.getElementById('langSelect').value = currentLang;
 
-    let alarms = JSON.parse(localStorage.getItem('alarm_list')) || [
-        { time: '07:00', label: 'Morning Workout', active: true },
-        { time: '08:30', label: 'College Lecture', active: true }
+    let alarms = JSON.parse(localStorage.getItem('smart_alarm_list')) || [
+        { time: '07:00', label: 'Morning Routine', sound: 'loud', mission: 'math', active: true }
     ];
 
-    let currentCorrectAnswer = 0;
+    let currentMissionType = 'math';
+    let missionTargetValue = null;
     let ringingAlarmIndex = null;
 
     const translations = {
         en: {
-            title: "ChronoAlarm",
+            title: "SmartAlarm",
             tabAlarm: "Alarms",
+            tabSounds: "Soundscapes",
             tabStopwatch: "Stopwatch",
             lblSetAlarm: "Set New Alarm",
             lblAlarmLabel: "Alarm Label",
-            addAlarmBtn: "Add Alarm",
-            modalAlert: "🚨 ALARM RINGING! 🚨",
-            puzzleInstruction: "Solve this math puzzle to dismiss the alarm:",
-            dismissBtn: "Dismiss Alarm"
+            lblSoundChoice: "Alarm Sound",
+            lblMissionChoice: "Wake-Up Mission",
+            addAlarmBtn: "Add Smart Alarm",
+            lblSoundscapeTitle: "Relaxing White Noise",
+            lblSoundscapeDesc: "Fall asleep faster with ambient audio tracks.",
+            modalAlert: "🚨 SMART ALARM RINGING! 🚨",
+            missionInstruction: "Complete your wake-up mission to dismiss:"
         },
         hi: {
-            title: "क्रोनो अलार्म",
+            title: "स्मार्ट अलार्म",
             tabAlarm: "अलार्म",
+            tabSounds: "साउंडस्केप",
             tabStopwatch: "स्टॉपवॉच",
             lblSetAlarm: "नया अलार्म सेट करें",
             lblAlarmLabel: "अलार्म का नाम",
-            addAlarmBtn: "अलार्म जोड़ें",
-            modalAlert: "🚨 अलार्म बज रहा है! 🚨",
-            puzzleInstruction: "अलार्म बंद करने के लिए इस गणित पहेली को हल करें:",
-            dismissBtn: "अलार्म बंद करें"
+            lblSoundChoice: "अलार्म ध्वनि",
+            lblMissionChoice: "वेक-अप मिशन",
+            addAlarmBtn: "स्मार्ट अलार्म जोड़ें",
+            lblSoundscapeTitle: "विश्रामदायक व्हाइट नॉइज",
+            lblSoundscapeDesc: "नींद जल्दी लाने के लिए सुखदायक ध्वनियाँ।",
+            modalAlert: "🚨 स्मार्ट अलार्म बज रहा है! 🚨",
+            missionInstruction: "अलार्म बंद करने के लिए अपना मिशन पूरा करें:"
         },
         ar: {
-            title: "منبه كرونو",
+            title: "منبه ذكي",
             tabAlarm: "المنبهات",
+            tabSounds: "أصوات الاسترخاء",
             tabStopwatch: "ساعة الإيقاف",
             lblSetAlarm: "ضبط منبه جديد",
             lblAlarmLabel: "تسمية المنبه",
-            addAlarmBtn: "إضافة منبه",
-            modalAlert: "🚨 المنبه يرن! 🚨",
-            puzzleInstruction: "حل هذه المسألة الرياضية لإيقاف المنبه:",
-            dismissBtn: "إيقاف المنبه"
+            lblSoundChoice: "نغمة المنبه",
+            lblMissionChoice: "مهمة الاستيقاظ",
+            addAlarmBtn: "إضافة منبه ذكي",
+            lblSoundscapeTitle: "أصوات النوم الهادئة",
+            lblSoundscapeDesc: "انمِ بعمق مع أصوات الخلفية المريحة.",
+            modalAlert: "🚨 المنبه الذكي يرن! 🚨",
+            missionInstruction: "أكمل مهمة الاستيقاظ لإيقاف المنبه:"
         }
     };
 
     function changeLanguage(lang) {
         currentLang = lang;
-        localStorage.setItem('alarm_lang', lang);
+        localStorage.setItem('smart_alarm_lang', lang);
         applyTranslations();
     }
 
@@ -276,13 +324,17 @@
         let t = translations[currentLang] || translations['en'];
         document.getElementById('appTitle').textContent = t.title;
         document.getElementById('tabAlarmBtn').textContent = t.tabAlarm;
+        document.getElementById('tabSoundsBtn').textContent = t.tabSounds;
         document.getElementById('tabStopwatchBtn').textContent = t.tabStopwatch;
         document.getElementById('lblSetAlarm').textContent = t.lblSetAlarm;
         document.getElementById('lblAlarmLabel').textContent = t.lblAlarmLabel;
+        document.getElementById('lblSoundChoice').textContent = t.lblSoundChoice;
+        document.getElementById('lblMissionChoice').textContent = t.lblMissionChoice;
         document.getElementById('addAlarmBtn').textContent = t.addAlarmBtn;
+        document.getElementById('lblSoundscapeTitle').textContent = t.lblSoundscapeTitle;
+        document.getElementById('lblSoundscapeDesc').textContent = t.lblSoundscapeDesc;
         document.getElementById('modalAlarmAlert').textContent = t.modalAlert;
-        document.getElementById('modalPuzzleInstruction').textContent = t.puzzleInstruction;
-        document.getElementById('dismissBtn').textContent = t.dismissBtn;
+        document.getElementById('modalMissionInstruction').textContent = t.missionInstruction;
     }
 
     function switchTab(tabName, btnEl) {
@@ -302,7 +354,6 @@
         document.getElementById('liveClock').textContent = `${hours}:${minutes}:${seconds}`;
         document.getElementById('liveDate').textContent = now.toDateString();
 
-        // Check if any active alarm matches current time (HH:MM)
         let currentTimeStr = `${hours}:${minutes}`;
         alarms.forEach((alarm, index) => {
             if (alarm.active && alarm.time === currentTimeStr && ringingAlarmIndex === null) {
@@ -313,34 +364,79 @@
 
     function triggerAlarm(index) {
         ringingAlarmIndex = index;
-        let num1 = Math.floor(Math.random() * 10) + 1;
-        let num2 = Math.floor(Math.random() * 10) + 1;
-        currentCorrectAnswer = num1 + num2;
-        document.getElementById('mathProblem').textContent = `${num1} + ${num2} = ?`;
+        let mission = alarms[index].mission || 'math';
+        currentMissionType = mission;
+        
+        let container = document.getElementById('missionContainer');
+        let submitBtn = document.getElementById('dismissMissionBtn');
+        container.innerHTML = '';
+
+        if (mission === 'math') {
+            let n1 = Math.floor(Math.random() * 15) + 5;
+            let n2 = Math.floor(Math.random() * 15) + 5;
+            missionTargetValue = n1 + n2;
+            container.innerHTML = `
+                <div style="font-size: 1.8rem; font-weight: bold; color: var(--accent-gold); margin-bottom: 10px;">${n1} + ${n2} = ?</div>
+                <input type="number" id="missionInput" placeholder="Enter answer" style="text-align: center; font-size: 1.1rem;">
+            `;
+            submitBtn.style.display = 'block';
+        } else if (mission === 'type') {
+            missionTargetValue = "WAKE UP NOW";
+            container.innerHTML = `
+                <div style="font-size: 1.1rem; color: var(--accent-gold); margin-bottom: 10px;">Type: "WAKE UP NOW"</div>
+                <input type="text" id="missionInput" placeholder="Type text exactly" style="text-align: center; font-size: 1rem;">
+            `;
+            submitBtn.style.display = 'block';
+        } else if (mission === 'shake') {
+            missionTargetValue = 15; // 15 shakes required
+            container.innerHTML = `
+                <div style="font-size: 1.3rem; font-weight: bold; color: var(--accent-green); margin-bottom: 10px;" id="shakeCount">Shakes left: 15</div>
+                <button class="action-btn" onclick="registerShake()" style="background:#34d399; color:#0f172a;">📱 Tap to Shake Phone</button>
+            `;
+            submitBtn.style.display = 'none';
+        }
+
         document.getElementById('alarmModal').style.display = 'flex';
     }
 
-    function verifyMathAnswer() {
-        let userAns = parseInt(document.getElementById('mathAnswerInput').value);
-        if (userAns === currentCorrectAnswer) {
-            document.getElementById('alarmModal').style.display = 'none';
-            document.getElementById('mathAnswerInput').value = '';
-            if (ringingAlarmIndex !== null) {
-                alarms[ringingAlarmIndex].active = false; // Turn off alarm after success
-                ringingAlarmIndex = null;
-                updateAlarmUI();
+    function registerShake() {
+        if (currentMissionType === 'shake') {
+            missionTargetValue--;
+            document.getElementById('shakeCount').textContent = `Shakes left: ${missionTargetValue}`;
+            if (missionTargetValue <= 0) {
+                closeAlarmModal();
             }
+        }
+    }
+
+    function verifyMission() {
+        let inputVal = document.getElementById('missionInput').value.trim();
+        if (currentMissionType === 'math' && parseInt(inputVal) === missionTargetValue) {
+            closeAlarmModal();
+        } else if (currentMissionType === 'type' && inputVal.toUpperCase() === missionTargetValue) {
+            closeAlarmModal();
         } else {
-            alert(currentLang === 'hi' ? 'गलत उत्तर! पुनः प्रयास करें।' : (currentLang === 'ar' ? 'إجابة خاطئة! حاول مرة أخرى.' : 'Incorrect answer! Try again.'));
+            alert(currentLang === 'hi' ? 'गलत उत्तर! पुनः प्रयास करें।' : 'Incorrect! Try again.');
+        }
+    }
+
+    function closeAlarmModal() {
+        document.getElementById('alarmModal').style.display = 'none';
+        if (ringingAlarmIndex !== null) {
+            alarms[ringingAlarmIndex].active = false;
+            ringingAlarmIndex = null;
+            updateAlarmUI();
         }
     }
 
     function addAlarm() {
         let time = document.getElementById('alarmTimeInput').value;
         let label = document.getElementById('alarmLabelInput').value.trim() || 'Alarm';
+        let sound = document.getElementById('alarmSoundSelect').value;
+        let mission = document.getElementById('alarmMissionSelect').value;
         if (!time) return;
 
-        alarms.push({ time, label, active: true });
+        alarms.push({ time, label, sound, mission, active: true });
         document.getElementById('alarmTimeInput').value = '';
         document.getElementById('alarmLabelInput').value = '';
         updateAlarmUI();
@@ -363,30 +459,48 @@
                 <div class="list-card">
                     <div>
                         <strong style="font-size: 1.2rem; color: var(--accent-gold);">${alarm.time}</strong>
-                        <span style="color: #94a3b8; font-size: 0.85rem;">${alarm.label}</span>
+                        <span style="color: #94a3b8; font-size: 0.8rem;">${alarm.label} | Mission: ${alarm.mission.toUpperCase()}</span>
                     </div>
                     <div style="display: flex; gap: 8px; align-items: center;">
-                        <input type="checkbox" ${alarm.active ? 'checked' : ''} onchange="toggleAlarm(${idx})" style="width: 20px; height: 20px; cursor: pointer; margin: 0;">
+                        <input type="checkbox" ${alarm.active ? 'checked' : ''} onchange="toggleAlarm(${idx})" style="width: 18px; height: 18px; cursor: pointer; margin: 0;">
                         <button onclick="deleteAlarm(${idx})" style="background: #ef4444; color: #fff; border: none; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.75rem;">Del</button>
                     </div>
                 </div>
             `;
         });
         document.getElementById('alarmListContainer').innerHTML = html || '<p style="text-align:center; color:#94a3b8;">No alarms set.</p>';
-        localStorage.setItem('alarm_list', JSON.stringify(alarms));
+        localStorage.setItem('smart_alarm_list', JSON.stringify(alarms));
     }
 
-    // Stopwatch logic
-    let swSeconds = 0, swInterval = null;
+    // White noise audio simulator toggle
+    let isPlayingNoise = false;
+    function toggleWhiteNoise() {
+        isPlayingNoise = !isPlayingNoise;
+        let btn = document.getElementById('noiseToggleBtn');
+        if (isPlayingNoise) {
+            btn.textContent = currentLang === 'hi' ? 'साउंडस्केप बंद करें' : 'Stop Soundscape';
+            btn.style.background = '#ef4444';
+            btn.style.color = '#fff';
+        } else {
+            btn.textContent = currentLang === 'hi' ? 'साउंडस्केप चलाएं' : 'Play Soundscape';
+            btn.style.background = '#34d399';
+            btn.style.color = '#0f172a';
+        }
+    }
+
+    // Stopwatch logic with Milliseconds
+    let swTime = 0, swInterval = null;
     function startStopwatch() {
         if (!swInterval) {
+            let startTime = Date.now() - swTime;
             swInterval = setInterval(() => {
-                swSeconds++;
-                let hrs = String(Math.floor(swSeconds / 3600)).padStart(2, '0');
-                let mins = String(Math.floor((swSeconds % 3600) / 60)).padStart(2, '0');
-                let secs = String(swSeconds % 60).padStart(2, '0');
-                document.getElementById('stopwatchDisplay').textContent = `${hrs}:${mins}:${secs}`;
-            }, 1000);
+                swTime = Date.now() - startTime;
+                let hrs = String(Math.floor(swTime / 3600000)).padStart(2, '0');
+                let mins = String(Math.floor((swTime % 3600000) / 60000)).padStart(2, '0');
+                let secs = String(Math.floor((swTime % 60000) / 1000)).padStart(2, '0');
+                let ms = String(Math.floor((swTime % 1000) / 10)).padStart(2, '0');
+                document.getElementById('stopwatchDisplay').textContent = `${hrs}:${mins}:${secs}.${ms}`;
+            }, 10);
         }
     }
     function pauseStopwatch() {
@@ -395,8 +509,8 @@
     }
     function resetStopwatch() {
         pauseStopwatch();
-        swSeconds = 0;
-        document.getElementById('stopwatchDisplay').textContent = "00:00:00";
+        swTime = 0;
+        document.getElementById('stopwatchDisplay').textContent = "00:00:00.00";
     }
 
     updateAlarmUI();
