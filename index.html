@@ -1,521 +1,2361 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartAlarm - Sleep & Wake System</title>
-    <style>
-        :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --text-color: #f8fafc;
-            --accent-gold: #fbbf24;
-            --accent-green: #34d399;
-            --accent-red: #ef4444;
-            --border-color: #334155;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 16px;
-            display: flex;
-            justify-content: center;
-        }
-        .container {
-            width: 100%;
-            max-width: 400px;
-            padding-bottom: 60px;
-        }
-        .top-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-        h1 {
-            font-size: 1.3rem;
-            margin: 0;
-            color: var(--accent-gold);
-        }
-        .lang-select {
-            background-color: #090d16;
-            color: var(--accent-gold);
-            border: 1px solid var(--border-color);
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            outline: none;
-        }
-        .clock-display {
-            background: linear-gradient(135deg, #1e293b, #0f172a);
-            padding: 24px;
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-            text-align: center;
-            margin-bottom: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-        }
-        .time-text {
-            font-size: 2.8rem;
-            font-weight: bold;
-            color: var(--accent-gold);
-            letter-spacing: 2px;
-        }
-        .date-text {
-            font-size: 0.85rem;
-            color: #94a3b8;
-            margin-top: 4px;
-        }
-        .tabs {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 6px;
-            margin-bottom: 16px;
-        }
-        .tab-btn {
-            padding: 8px 4px;
-            background-color: #1e293b;
-            border: 1px solid var(--border-color);
-            color: #94a3b8;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 0.75rem;
-            cursor: pointer;
-            text-align: center;
-        }
-        .tab-btn.active {
-            background-color: var(--accent-gold);
-            color: #0f172a;
-            border-color: var(--accent-gold);
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        .box {
-            background-color: var(--card-bg);
-            padding: 16px;
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-            margin-bottom: 16px;
-        }
-        label {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #cbd5e1;
-            display: block;
-            margin-bottom: 4px;
-        }
-        input, select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            background-color: #090d16;
-            color: var(--text-color);
-            box-sizing: border-box;
-            font-size: 0.9rem;
-            outline: none;
-        }
-        .action-btn {
-            background: linear-gradient(135deg, #fbbf24, #d97706);
-            color: #0f172a;
-            font-weight: bold;
-            cursor: pointer;
-            border: none;
-            width: 100%;
-            padding: 11px;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            box-shadow: 0 2px 10px rgba(251, 191, 36, 0.3);
-        }
-        .list-card {
-            background-color: var(--card-bg);
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid var(--border-color);
-        }
-        /* Alarm Ringing Mission Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.98);
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            flex-direction: column;
-            padding: 20px;
-            box-sizing: border-box;
-            text-align: center;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0b1220">
+<title>SmartAlarm – Sleep, Heal & Wake</title>
+<style>
+:root {
+  --bg:#0b1220; --card:#151e2e; --card2:#1c273a; --text:#f1f5f9;
+  --muted:#94a3b8; --gold:#fbbf24; --green:#34d399; --red:#ef4444;
+  --blue:#60a5fa; --purple:#a78bfa; --border:#2a3649; --radius:14px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);margin:0;padding:12px;min-height:100vh;display:flex;justify-content:center}
+.app{width:100%;max-width:420px;padding-bottom:90px}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.header h1{font-size:1.25rem;margin:0;color:var(--gold)}
+.header-actions{display:flex;gap:6px;align-items:center}
+.icon-btn,.lang-select{background:var(--card);border:1px solid var(--border);color:var(--gold);border-radius:8px;padding:6px 10px;font-size:.8rem;cursor:pointer}
+.clock-card{background:linear-gradient(145deg,#1a2438,#0f172a);border:1px solid var(--border);border-radius:20px;padding:20px 14px;text-align:center;margin-bottom:14px;box-shadow:0 8px 32px rgba(0,0,0,.35);position:relative;overflow:hidden}
+.time-big{font-size:3rem;font-weight:700;color:var(--gold);letter-spacing:2px}
+.date-row{font-size:.82rem;color:var(--muted);margin-top:3px}
+.next-alarm{margin-top:8px;font-size:.78rem;color:var(--green);min-height:16px}
+.streak-badge{position:absolute;top:10px;right:12px;background:rgba(251,191,36,.15);color:var(--gold);font-size:.68rem;padding:3px 8px;border-radius:20px;border:1px solid rgba(251,191,36,.3)}
+.tabs{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-bottom:14px}
+.tab-btn{background:var(--card);border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:8px 2px;font-size:.68rem;font-weight:600;cursor:pointer}
+.tab-btn.active{background:var(--gold);color:#0f172a;border-color:var(--gold)}
+.panel{display:none}.panel.active{display:block}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px}
+.card h3{margin:0 0 10px;font-size:.95rem;color:var(--gold)}
+label{display:block;font-size:.72rem;color:var(--muted);margin-bottom:4px;font-weight:600}
+input[type=time],input[type=text],input[type=number],select,textarea{width:100%;padding:10px 12px;margin-bottom:10px;border-radius:9px;border:1px solid var(--border);background:#0a101c;color:var(--text);font-size:.88rem;outline:none}
+input:focus,select:focus{border-color:var(--gold)}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.btn{width:100%;padding:11px;border:none;border-radius:10px;font-weight:700;font-size:.88rem;cursor:pointer}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:linear-gradient(135deg,#fbbf24,#d97706);color:#0f172a;box-shadow:0 4px 14px rgba(251,191,36,.25)}
+.btn-green{background:var(--green);color:#0f172a}
+.btn-red{background:var(--red);color:#fff}
+.btn-purple{background:var(--purple);color:#0f172a}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}
+.btn-sm{padding:7px 10px;font-size:.78rem;width:auto}
+.alarm-item{display:flex;justify-content:space-between;align-items:center;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:11px;margin-bottom:8px}
+.alarm-item .time{font-size:1.3rem;font-weight:700;color:var(--gold)}
+.alarm-item .meta{font-size:.7rem;color:var(--muted);margin-top:2px}
+.alarm-item .actions{display:flex;gap:6px;align-items:center}
+.toggle{width:40px;height:22px;background:#334155;border-radius:20px;position:relative;cursor:pointer;transition:.2s}
+.toggle.on{background:var(--green)}
+.toggle::after{content:'';position:absolute;width:16px;height:16px;background:#fff;border-radius:50%;top:3px;left:3px;transition:.2s}
+.toggle.on::after{left:21px}
+.del-btn{background:transparent;border:none;color:var(--red);font-size:1.1rem;cursor:pointer;padding:4px}
+.days{display:flex;gap:4px;margin-bottom:10px;flex-wrap:wrap}
+.day-chip{width:30px;height:30px;border-radius:50%;border:1px solid var(--border);background:#0a101c;color:var(--muted);font-size:.68rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.day-chip.on{background:var(--gold);color:#0f172a;border-color:var(--gold)}
+.sound-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.sound-card{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;transition:.15s}
+.sound-card.active{border-color:var(--green);background:rgba(52,211,153,.1)}
+.sound-card .emoji{font-size:1.5rem}
+.sound-card .name{font-size:.72rem;margin-top:3px;color:var(--muted)}
+.freq-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px;max-height:260px;overflow-y:auto}
+.freq-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 6px;text-align:center;cursor:pointer;font-size:.7rem}
+.freq-card.active{border-color:var(--purple);background:rgba(167,139,250,.15);color:var(--purple)}
+.freq-card .hz{font-weight:700;font-size:.85rem;display:block}
+.freq-card .lbl{color:var(--muted);font-size:.62rem}
+.big-timer{font-size:2.4rem;font-weight:700;color:var(--gold);text-align:center;letter-spacing:1px;margin:14px 0;font-variant-numeric:tabular-nums}
+.btn-row{display:flex;gap:8px}.btn-row .btn{flex:1}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stat-box{background:var(--card2);border-radius:12px;padding:12px;text-align:center}
+.stat-box .num{font-size:1.4rem;font-weight:700;color:var(--gold)}
+.stat-box .lbl{font-size:.68rem;color:var(--muted);margin-top:2px}
+.modal{display:none;position:fixed;inset:0;background:rgba(8,12,20,.97);z-index:1000;flex-direction:column;align-items:center;justify-content:center;padding:18px;text-align:center}
+.modal.show{display:flex}
+.modal h2{color:var(--red);font-size:1.5rem;margin:0 0 6px;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+.mission-box{width:100%;max-width:340px;margin:12px 0}
+.math-q{font-size:1.9rem;font-weight:700;color:var(--gold);margin-bottom:10px}
+.shake-count{font-size:1.3rem;color:var(--green);margin-bottom:10px}
+.vol-bar{width:100%;max-width:280px;height:6px;background:#1e293b;border-radius:3px;margin:8px auto;overflow:hidden}
+.vol-fill{height:100%;background:var(--gold);width:0%;transition:width .4s}
+.snooze-bar{display:flex;gap:8px;margin-top:10px;width:100%;max-width:320px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--card2);border:1px solid var(--border);color:var(--text);padding:10px 16px;border-radius:30px;font-size:.82rem;z-index:3000;transition:.3s;opacity:0;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+body.nightstand{background:#000}
+body.nightstand .app>*:not(.clock-card):not(.header){display:none!important}
+body.nightstand .header{position:fixed;top:8px;right:12px;z-index:10;background:transparent}
+body.nightstand .header h1,body.nightstand .lang-select{display:none!important}
+body.nightstand .clock-card{position:fixed;inset:0;display:flex;flex-direction:column;justify-content:center;border:none;border-radius:0;background:#000;margin:0;box-shadow:none;cursor:pointer}
+body.nightstand .time-big{font-size:5rem;color:#334155}
+body.nightstand .date-row,body.nightstand .next-alarm,body.nightstand .streak-badge{color:#1e293b}
+.onboard{position:fixed;inset:0;background:var(--bg);z-index:2000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
+.onboard.hidden{display:none}
+.cat-label{font-size:.7rem;color:var(--muted);margin:10px 0 6px;text-transform:uppercase;letter-spacing:.5px}
+.pic-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:280px;margin:0 auto}
+.pic-card{aspect-ratio:1;border-radius:10px;border:2px solid var(--border);background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:1.8rem;cursor:pointer;transition:.15s}
+.pic-card.flipped,.pic-card.matched{border-color:var(--green)}
+.pic-card.matched{opacity:.6}
+#selfiePreview{width:100%;max-width:280px;border-radius:12px;background:#000;aspect-ratio:3/4;object-fit:cover;margin:0 auto 10px;display:block}
+.volume-row{display:flex;align-items:center;gap:10px;margin:8px 0}
+.volume-row input[type=range]{flex:1;accent-color:var(--gold)}
+.sub-tabs{display:flex;gap:4px;margin-bottom:12px;overflow-x:auto;padding-bottom:2px}
+.sub-tab{flex:1;min-width:0;background:var(--card2);border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:7px 4px;font-size:.68rem;font-weight:600;cursor:pointer;text-align:center;white-space:nowrap}
+.sub-tab.active{background:var(--gold);color:#0f172a;border-color:var(--gold)}
+.sub-panel{display:none}.sub-panel.active{display:block}
+.center-controls{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:12px}
+.btn-play{width:70%;max-width:240px;padding:12px 16px;border:none;border-radius:28px;font-weight:700;font-size:.9rem;cursor:pointer;letter-spacing:.3px;box-shadow:0 4px 16px rgba(0,0,0,.25)}
+.btn-play.playing{background:var(--red);color:#fff}
+.btn-play.idle{background:linear-gradient(135deg,#34d399,#10b981);color:#0f172a}
+.btn-play.heal-idle{background:linear-gradient(135deg,#a78bfa,#7c3aed);color:#fff}
+.btn-slim{width:100%;padding:9px 14px;border:none;border-radius:10px;font-weight:600;font-size:.82rem;cursor:pointer}
+.guide-box{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:14px;font-size:.78rem;line-height:1.55;color:var(--text);max-height:340px;overflow-y:auto}
+.guide-box h4{color:var(--gold);margin:12px 0 4px;font-size:.85rem}
+.guide-box h4:first-child{margin-top:0}
+.guide-box p{margin:0 0 6px;color:var(--muted)}
+.profile-avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#fbbf24,#d97706);display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 10px}
+.lock-overlay{display:none;position:fixed;inset:0;background:rgba(8,12,20,.96);z-index:5000;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+.lock-overlay.show{display:flex}
+.lock-dots{display:flex;gap:12px;margin:16px 0}
+.lock-dot{width:12px;height:12px;border-radius:50%;background:var(--border)}
+.lock-dot.filled{background:var(--gold)}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:220px;width:100%}
+.pin-key{aspect-ratio:1;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:1.3rem;font-weight:600;cursor:pointer}
+.pin-key:active{background:var(--gold);color:#0f172a}
+
+</style>
 </head>
 <body>
+<div class="app" id="app">
 
-<div class="container">
-    <div class="top-header">
-        <h1 id="appTitle">SmartAlarm</h1>
-        <select id="langSelect" class="lang-select" onchange="changeLanguage(this.value)">
-            <option value="en">English</option>
-            <option value="hi">हिंदी</option>
-            <option value="ar">العربية</option>
+<div class="header">
+  <h1 id="appTitle">SmartAlarm</h1>
+  <div class="header-actions">
+    <button class="icon-btn" id="nightstandBtn" onclick="toggleNightstand()" title="Nightstand mode – full-screen dim clock">🌙</button>
+    <select id="langSelect" class="lang-select" onchange="changeLanguage(this.value)">
+      <option value="en">EN</option><option value="hi">हि</option><option value="ar">ع</option>
+    </select>
+  </div>
+</div>
+
+<div class="clock-card" id="clockCard">
+  <div class="streak-badge" id="streakBadge">🔥 0 day streak</div>
+  <div class="time-big" id="liveClock">00:00:00</div>
+  <div class="date-row" id="liveDate">Loading...</div>
+  <div class="next-alarm" id="nextAlarmInfo"></div>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" data-tab="alarms" onclick="switchTab('alarms',this)">Alarms</button>
+  <button class="tab-btn" data-tab="sounds" onclick="switchTab('sounds',this)">Sleep</button>
+  <button class="tab-btn" data-tab="heal" onclick="switchTab('heal',this)">Heal</button>
+  <button class="tab-btn" data-tab="sacred" onclick="switchTab('sacred',this)">Sacred</button>
+  <button class="tab-btn" data-tab="tools" onclick="switchTab('tools',this)">Tools</button>
+  <button class="tab-btn" data-tab="profile" onclick="switchTab('profile',this)">Profile</button>
+</div>
+
+<!-- ===== ALARMS ===== -->
+<div id="panel-alarms" class="panel active">
+  <div class="card">
+    <h3>➕ New Smart Alarm</h3>
+    <label>Time</label>
+    <input type="time" id="alarmTime" value="07:00">
+    <label>Label</label>
+    <input type="text" id="alarmLabel" placeholder="Morning, Gym, Work...">
+    <label>Repeat</label>
+    <div class="days" id="dayChips">
+      <div class="day-chip" data-d="0">S</div><div class="day-chip" data-d="1">M</div>
+      <div class="day-chip" data-d="2">T</div><div class="day-chip" data-d="3">W</div>
+      <div class="day-chip" data-d="4">T</div><div class="day-chip" data-d="5">F</div>
+      <div class="day-chip" data-d="6">S</div>
+    </div>
+
+    <label>Alarm Sound Category</label>
+    <select id="alarmSoundCat" onchange="populateAlarmSounds()">
+      <option value="soothing">🌿 Soothing / Mild</option>
+      <option value="moderate">🔔 Moderate</option>
+      <option value="loud">📢 Loud</option>
+      <option value="extreme">🚨 Extreme (Heavy Sleepers)</option>
+      <option value="random">🎲 Random Rotate</option>
+    </select>
+    <label>Specific Sound</label>
+    <select id="alarmSound"></select>
+
+    <div class="row">
+      <div>
+        <label>Mission</label>
+        <select id="alarmMission">
+          <option value="none">None (Easy)</option>
+          <option value="math">Math Puzzle</option>
+          <option value="math2">Hard Math</option>
+          <option value="type">Type Phrase</option>
+          <option value="shake">Shake Phone</option>
+          <option value="memory">Memory Match</option>
+          <option value="pics">Picture Matching</option>
+          <option value="selfie">Selfie Challenge</option>
         </select>
+      </div>
+      <div>
+        <label>Snooze</label>
+        <select id="alarmSnooze">
+          <option value="5">5 min</option><option value="9">9 min</option>
+          <option value="10">10 min</option><option value="0">No Snooze</option>
+        </select>
+      </div>
     </div>
-
-    <!-- Live Clock Banner -->
-    <div class="clock-display">
-        <div class="time-text" id="liveClock">00:00:00</div>
-        <div class="date-text" id="liveDate">Loading date...</div>
+    <div class="row">
+      <div>
+        <label>Max Snoozes</label>
+        <select id="alarmMaxSnooze">
+          <option value="3">3 times</option><option value="1">1 time</option>
+          <option value="5">5 times</option><option value="0">Unlimited</option>
+        </select>
+      </div>
+      <div>
+        <label style="display:flex;align-items:center;gap:6px;margin-top:18px">
+          <input type="checkbox" id="gradualVol" checked style="width:auto;margin:0"> Gradual + Sunrise
+        </label>
+      </div>
     </div>
-
-    <!-- Navigation Tabs -->
-    <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('alarms', this)" id="tabAlarmBtn">Alarms</button>
-        <button class="tab-btn" onclick="switchTab('soundscapes', this)" id="tabSoundsBtn">Soundscapes</button>
-        <button class="tab-btn" onclick="switchTab('stopwatch', this)" id="tabStopwatchBtn">Stopwatch</button>
-    </div>
-
-    <!-- TAB 1: ALARMS & MISSIONS -->
-    <div id="tab-alarms" class="tab-content active">
-        <div class="box">
-            <label id="lblSetAlarm">Set New Alarm</label>
-            <input type="time" id="alarmTimeInput" required>
-            
-            <label id="lblAlarmLabel">Alarm Label</label>
-            <input type="text" id="alarmLabelInput" placeholder="e.g. Morning Workout">
-
-            <label id="lblSoundChoice">Alarm Sound</label>
-            <select id="alarmSoundSelect">
-                <option value="gentle">Gentle Chime (Fade-In)</option>
-                <option value="birds">Nature Birds</option>
-                <option value="loud">Loud Siren (Heavy Sleeper)</option>
-                <option value="airhorn">Extreme Air Horn</option>
-            </select>
-
-            <label id="lblMissionChoice">Wake-Up Mission</label>
-            <select id="alarmMissionSelect">
-                <option value="math">Math Puzzle Challenge</option>
-                <option value="shake">Shake-to-Wake (30 Shakes)</option>
-                <option value="type">Typing Verification</option>
-            </select>
-
-            <button class="action-btn" onclick="addAlarm()" id="addAlarmBtn">Add Smart Alarm</button>
-        </div>
-        <div id="alarmListContainer"></div>
-    </div>
-
-    <!-- TAB 2: SLEEP SOUNDSCAPES -->
-    <div id="tab-soundscapes" class="tab-content">
-        <div class="box" style="text-align: center;">
-            <h3 style="color: var(--accent-gold); margin-top:0;" id="lblSoundscapeTitle">Relaxing White Noise</h3>
-            <p style="color: #94a3b8; font-size: 0.85rem;" id="lblSoundscapeDesc">Fall asleep faster with ambient audio tracks.</p>
-            <select id="whiteNoiseSelect" style="margin-bottom: 15px;">
-                <option value="rain">🌧️ Gentle Rain</option>
-                <option value="ocean">🌊 Ocean Waves</option>
-                <option value="fan">🌀 Sleeping Fan</option>
-                <option value="forest">🌲 Forest Night</option>
-            </select>
-            <button class="action-btn" onclick="toggleWhiteNoise()" id="noiseToggleBtn" style="background:#34d399; color:#0f172a;">Play Soundscape</button>
-        </div>
-    </div>
-
-    <!-- TAB 3: STOPWATCH WITH MILLISECONDS -->
-    <div id="tab-stopwatch" class="tab-content">
-        <div class="box" style="text-align: center;">
-            <div style="font-size: 2.2rem; font-weight: bold; color: var(--accent-gold); margin: 15px 0; letter-spacing: 1px;" id="stopwatchDisplay">00:00:00.000</div>
-            <div style="display: flex; gap: 8px;">
-                <button class="action-btn" onclick="startStopwatch()" id="swStartBtn" style="background:#34d399; color:#0f172a;">Start</button>
-                <button class="action-btn" onclick="pauseStopwatch()" id="swPauseBtn" style="background:#fbbf24; color:#0f172a;">Pause</button>
-                <button class="action-btn" onclick="resetStopwatch()" id="swResetBtn" style="background:#ef4444; color:#fff;">Reset</button>
-            </div>
-        </div>
-    </div>
+    <button class="btn btn-primary" style="margin-top:8px" onclick="addAlarm()">Add Smart Alarm</button>
+  </div>
+  <div id="alarmList"></div>
 </div>
 
-<!-- MISSION WAKE-UP MODAL -->
-<div id="alarmModal" class="modal">
-    <h2 style="color: var(--accent-red); font-size: 2rem; margin-bottom: 10px;" id="modalAlarmAlert">🚨 SMART ALARM RINGING! 🚨</h2>
-    <p style="color: #94a3b8; margin-bottom: 20px;" id="modalMissionInstruction">Complete your wake-up mission to dismiss:</p>
-    
-    <div id="missionContainer" style="width: 100%; max-width: 300px; margin-bottom: 15px;">
-        <!-- Dynamic Mission Content -->
-    </div>
+<!-- ===== SLEEP / SOUNDSCAPES ===== -->
 
-    <button class="action-btn" style="max-width: 250px; background-color: var(--accent-green); color: #0f172a; display:none;" onclick="verifyMission()" id="dismissMissionBtn">Submit & Dismiss</button>
+<!-- ===== SLEEP (with sub-tabs) ===== -->
+<div id="panel-sounds" class="panel">
+  <div class="sub-tabs">
+    <button class="sub-tab active" onclick="switchSub('sleep','noise',this)">Noise</button>
+    <button class="sub-tab" onclick="switchSub('sleep','lullaby',this)">Lullabies</button>
+    <button class="sub-tab" onclick="switchSub('sleep','binaural',this)">Binaural</button>
+    <button class="sub-tab" onclick="switchSub('sleep','guide',this)">Guide</button>
+  </div>
+
+  <!-- Noise -->
+  <div id="sub-sleep-noise" class="sub-panel active">
+    <div class="card">
+      <h3>Colored Noise & Ambience</h3>
+      <div class="sound-grid" id="soundGrid">
+        <div class="sound-card" data-sound="white" onclick="selectSound(this)"><div class="emoji">⚪</div><div class="name">White</div></div>
+        <div class="sound-card" data-sound="pink" onclick="selectSound(this)"><div class="emoji">🌸</div><div class="name">Pink</div></div>
+        <div class="sound-card" data-sound="brown" onclick="selectSound(this)"><div class="emoji">🟤</div><div class="name">Brown</div></div>
+        <div class="sound-card" data-sound="green" onclick="selectSound(this)"><div class="emoji">🟢</div><div class="name">Green</div></div>
+        <div class="sound-card" data-sound="blue" onclick="selectSound(this)"><div class="emoji">🔵</div><div class="name">Blue</div></div>
+        <div class="sound-card" data-sound="gray" onclick="selectSound(this)"><div class="emoji">⬛</div><div class="name">Gray</div></div>
+        <div class="sound-card" data-sound="violet" onclick="selectSound(this)"><div class="emoji">🟣</div><div class="name">Violet</div></div>
+        <div class="sound-card" data-sound="rain" onclick="selectSound(this)"><div class="emoji">🌧️</div><div class="name">Rain</div></div>
+        <div class="sound-card" data-sound="ocean" onclick="selectSound(this)"><div class="emoji">🌊</div><div class="name">Ocean</div></div>
+        <div class="sound-card" data-sound="fan" onclick="selectSound(this)"><div class="emoji">🌀</div><div class="name">Fan</div></div>
+        <div class="sound-card" data-sound="forest" onclick="selectSound(this)"><div class="emoji">🌲</div><div class="name">Forest</div></div>
+        <div class="sound-card" data-sound="thunder" onclick="selectSound(this)"><div class="emoji">⛈️</div><div class="name">Thunder</div></div>
+        <div class="sound-card" data-sound="fire" onclick="selectSound(this)"><div class="emoji">🔥</div><div class="name">Fireplace</div></div>
+        <div class="sound-card" data-sound="womb" onclick="selectSound(this)"><div class="emoji">💓</div><div class="name">Womb</div></div>
+        <div class="sound-card" data-sound="shush" onclick="selectSound(this)"><div class="emoji">🤫</div><div class="name">Shush</div></div>
+        <div class="sound-card" data-sound="cafe" onclick="selectSound(this)"><div class="emoji">☕</div><div class="name">Café</div></div>
+      </div>
+      <label>Timer</label>
+      <select id="sleepTimer">
+        <option value="0">No timer</option><option value="15">15 min</option>
+        <option value="30" selected>30 min</option><option value="45">45 min</option>
+        <option value="60">60 min</option><option value="90">90 min</option>
+      </select>
+      <div class="volume-row">
+        <span style="font-size:.75rem;color:var(--muted)">Vol</span>
+        <input type="range" id="soundVol" min="0" max="100" value="40" oninput="setSoundVol(this.value)">
+        <span id="soundVolLbl" style="font-size:.75rem;width:30px">40%</span>
+      </div>
+      <div class="center-controls">
+        <button class="btn-play idle" id="playSoundBtn" onclick="toggleSoundscape()">▶ Play</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lullabies -->
+  <div id="sub-sleep-lullaby" class="sub-panel">
+    <div class="card">
+      <h3>Children's Lullabies</h3>
+      <div class="sound-grid" id="lullabyGrid">
+        <div class="sound-card" data-lullaby="twinkle" onclick="selectLullaby(this)"><div class="emoji">⭐</div><div class="name">Twinkle</div></div>
+        <div class="sound-card" data-lullaby="brahms" onclick="selectLullaby(this)"><div class="emoji">🎶</div><div class="name">Brahms</div></div>
+        <div class="sound-card" data-lullaby="rockaby" onclick="selectLullaby(this)"><div class="emoji">🍼</div><div class="name">Rock-a-bye</div></div>
+        <div class="sound-card" data-lullaby="hush" onclick="selectLullaby(this)"><div class="emoji">🌙</div><div class="name">Hush</div></div>
+        <div class="sound-card" data-lullaby="areyou" onclick="selectLullaby(this)"><div class="emoji">😴</div><div class="name">Are You Sleeping</div></div>
+        <div class="sound-card" data-lullaby="lavender" onclick="selectLullaby(this)"><div class="emoji">💜</div><div class="name">Lavender</div></div>
+        <div class="sound-card" data-lullaby="allthe" onclick="selectLullaby(this)"><div class="emoji">✨</div><div class="name">Pretty Horses</div></div>
+        <div class="sound-card" data-lullaby="softbox" onclick="selectLullaby(this)"><div class="emoji">📦</div><div class="name">Music Box</div></div>
+        <div class="sound-card" data-lullaby="pentatonic" onclick="selectLullaby(this)"><div class="emoji">🎹</div><div class="name">Pentatonic</div></div>
+        <div class="sound-card" data-lullaby="oceanlull" onclick="selectLullaby(this)"><div class="emoji">🌊</div><div class="name">Ocean Lull</div></div>
+      </div>
+      <label>Timer</label>
+      <select id="lullabyTimer">
+        <option value="0">Until stopped</option><option value="10">10 min</option>
+        <option value="20">20 min</option><option value="30" selected>30 min</option>
+        <option value="45">45 min</option><option value="60">60 min</option>
+      </select>
+      <div class="volume-row">
+        <span style="font-size:.75rem;color:var(--muted)">Vol</span>
+        <input type="range" id="lullabyVol" min="0" max="100" value="35" oninput="setLullabyVol(this.value)">
+        <span id="lullabyVolLbl" style="font-size:.75rem;width:30px">35%</span>
+      </div>
+      <div class="center-controls">
+        <button class="btn-play idle" id="playLullabyBtn" onclick="toggleLullaby()">▶ Play</button>
+        <p id="lullabyNow" style="font-size:.74rem;color:var(--green);min-height:16px;margin:0"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Binaural -->
+  <div id="sub-sleep-binaural" class="sub-panel">
+    <div class="card">
+      <h3>Binaural Beats</h3>
+      <p style="font-size:.74rem;color:var(--muted);margin:0 0 10px">Requires headphones. Not recommended under age 3.</p>
+      <div class="sound-grid" id="binauralGrid">
+        <div class="sound-card" data-bin="delta2" onclick="selectBinaural(this)"><div class="emoji">💤</div><div class="name">Delta 2 Hz</div></div>
+        <div class="sound-card" data-bin="delta3" onclick="selectBinaural(this)"><div class="emoji">🌙</div><div class="name">Delta 3 Hz</div></div>
+        <div class="sound-card" data-bin="theta4" onclick="selectBinaural(this)"><div class="emoji">🧘</div><div class="name">Theta 4 Hz</div></div>
+        <div class="sound-card" data-bin="theta6" onclick="selectBinaural(this)"><div class="emoji">🌊</div><div class="name">Theta 6 Hz</div></div>
+        <div class="sound-card" data-bin="alpha8" onclick="selectBinaural(this)"><div class="emoji">😌</div><div class="name">Alpha 8 Hz</div></div>
+        <div class="sound-card" data-bin="alpha10" onclick="selectBinaural(this)"><div class="emoji">🧠</div><div class="name">Alpha 10 Hz</div></div>
+      </div>
+      <label>Timer</label>
+      <select id="binTimer">
+        <option value="0">Until stopped</option><option value="15">15 min</option>
+        <option value="20" selected>20 min</option><option value="30">30 min</option><option value="45">45 min</option>
+      </select>
+      <div class="volume-row">
+        <span style="font-size:.75rem;color:var(--muted)">Vol</span>
+        <input type="range" id="binVol" min="0" max="100" value="30" oninput="setBinVol(this.value)">
+        <span id="binVolLbl" style="font-size:.75rem;width:30px">30%</span>
+      </div>
+      <div class="center-controls">
+        <button class="btn-play heal-idle" id="playBinBtn" onclick="toggleBinaural()">▶ Play</button>
+        <p id="binNow" style="font-size:.74rem;color:var(--purple);min-height:16px;margin:0"></p>
+      </div>
+    </div>
+  </div>
+
+  
+<div id="sub-sleep-guide" class="sub-panel">
+    <div class="card">
+      <h3>Age-Specific Sound Guide</h3>
+      <div class="guide-box">
+        <h4>0–12 months (Infants)</h4>
+        <p>Prefer continuous low/deep sounds: Pink, Brown, White, Womb/Heartbeat, Soft Shush.</p>
+        <p>Volume ≤ 50 dB. Place speaker at least 7 feet from the crib. Prefer a timer instead of all-night playback.</p>
+        <p>Lullabies work well for the bedtime routine; continuous noise is better during actual sleep.</p>
+        <p style="color:var(--red)">Avoid binaural beats — limited safety data under age 3.</p>
+
+        <h4>1–3 years (Toddlers)</h4>
+        <p>Pink or Brown noise often preferred, plus familiar simple lullabies.</p>
+        <p>Keep volume low. Binaural beats still not recommended.</p>
+
+        <h4>4–12 years</h4>
+        <p>Full noise palette is fine. Optional short Theta (4–6 Hz) binaural with headphones if the child is comfortable (10–20 min sessions).</p>
+        <p>Pink noise is popular for deeper sleep; White noise for strong masking of household sounds.</p>
+
+        <h4>Teens & Adults</h4>
+        <p>Delta 1–4 Hz or Theta 4–8 Hz binaural for sleep onset and deep sleep (headphones required).</p>
+        <p>White = maximum masking · Pink = deep-sleep support · Brown = warmer, less harsh.</p>
+
+        <h4>Safety notes</h4>
+        <p>Never place a phone or speaker in the crib. Use the lowest volume that still helps. Consider fading sound after the child falls asleep.</p>
+      </div>
+    </div>
+  </div>
 </div>
+
+<!-- ===== HEAL (with sub-tabs) ===== -->
+<div id="panel-heal" class="panel">
+  <div class="sub-tabs">
+    <button class="sub-tab active" onclick="switchSub('heal','solf',this)">Solfeggio</button>
+    <button class="sub-tab" onclick="switchSub('heal','earth',this)">Earth</button>
+    <button class="sub-tab" onclick="switchSub('heal','chakra',this)">Chakra</button>
+    <button class="sub-tab" onclick="switchSub('heal','special',this)">Special</button>
+  </div>
+
+  <div class="card">
+    <p style="font-size:.76rem;color:var(--muted);margin:0 0 10px">Therapeutic tones. Play pure, pulsed, or binaural-style. Can mix under a soundscape.</p>
+    <div id="sub-heal-solf" class="sub-panel active"><div class="freq-grid" id="freqSolfeggio"></div></div>
+    <div id="sub-heal-earth" class="sub-panel"><div class="freq-grid" id="freqEarth"></div></div>
+    <div id="sub-heal-chakra" class="sub-panel"><div class="freq-grid" id="freqChakra"></div></div>
+    <div id="sub-heal-special" class="sub-panel"><div class="freq-grid" id="freqSpecial"></div></div>
+
+    <label style="margin-top:10px">Mode</label>
+    <select id="healMode">
+      <option value="pure">Pure Continuous</option>
+      <option value="pulse">Soft Pulse (Isochronic)</option>
+      <option value="binaural">Binaural-style</option>
+    </select>
+    <label>Timer</label>
+    <select id="healTimer">
+      <option value="0">Until stopped</option><option value="5">5 min</option>
+      <option value="10">10 min</option><option value="15">15 min</option>
+      <option value="30">30 min</option><option value="60">60 min</option>
+    </select>
+    <div class="volume-row">
+      <span style="font-size:.75rem;color:var(--muted)">Vol</span>
+      <input type="range" id="healVol" min="0" max="100" value="25" oninput="setHealVol(this.value)">
+      <span id="healVolLbl" style="font-size:.75rem;width:30px">25%</span>
+    </div>
+    <div class="center-controls">
+      <button class="btn-play heal-idle" id="playHealBtn" onclick="toggleHeal()">▶ Play</button>
+      <p id="healNowPlaying" style="font-size:.74rem;color:var(--purple);min-height:16px;margin:0"></p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== SACRED SOUNDS (4 traditions) ===== -->
+<div id="panel-sacred" class="panel">
+  <div class="sub-tabs">
+    <button class="sub-tab active" onclick="switchSub('sacred','islamic',this)">Islamic</button>
+    <button class="sub-tab" onclick="switchSub('sacred','biblical',this)">Biblical</button>
+    <button class="sub-tab" onclick="switchSub('sacred','sanatani',this)">Sanatani</button>
+    <button class="sub-tab" onclick="switchSub('sacred','general',this)">General</button>
+  </div>
+
+  <div class="card" style="margin-bottom:10px">
+    <p style="font-size:.74rem;color:var(--muted);margin:0;line-height:1.45">
+      Soft sacred soundscapes for calm and sleep. Soft tones for now — real licensed recitations can be added later.
+      Keep volume low and respectful.
+    </p>
+  </div>
+
+  <!-- Islamic -->
+  <div id="sub-sacred-islamic" class="sub-panel active">
+    <div class="card">
+      <h3>🕌 Islamic</h3>
+      <div class="sound-grid" id="sacredIslamicGrid">
+        <div class="sound-card" data-sacred="isl_allah" onclick="selectSacred(this)"><div class="emoji">🕊️</div><div class="name">Allah soft tone</div></div>
+        <div class="sound-card" data-sacred="isl_dhikr" onclick="selectSacred(this)"><div class="emoji">📿</div><div class="name">Dhikr pulse</div></div>
+        <div class="sound-card" data-sacred="isl_salawat" onclick="selectSacred(this)"><div class="emoji">✨</div><div class="name">Salawat ambience</div></div>
+        <div class="sound-card" data-sacred="isl_heart" onclick="selectSacred(this)"><div class="emoji">💓</div><div class="name">Heart + drone</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Biblical -->
+  <div id="sub-sacred-biblical" class="sub-panel">
+    <div class="card">
+      <h3>✝️ Biblical</h3>
+      <div class="sound-grid" id="sacredBiblicalGrid">
+        <div class="sound-card" data-sacred="bib_psalm" onclick="selectSacred(this)"><div class="emoji">📜</div><div class="name">Psalm tone</div></div>
+        <div class="sound-card" data-sacred="bib_amen" onclick="selectSacred(this)"><div class="emoji">🙏</div><div class="name">Amen soft</div></div>
+        <div class="sound-card" data-sacred="bib_peace" onclick="selectSacred(this)"><div class="emoji">🌿</div><div class="name">Peace drone</div></div>
+        <div class="sound-card" data-sacred="bib_heart" onclick="selectSacred(this)"><div class="emoji">💓</div><div class="name">Heart + drone</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sanatani -->
+  <div id="sub-sacred-sanatani" class="sub-panel">
+    <div class="card">
+      <h3>🕉️ Sanatani</h3>
+      <div class="sound-grid" id="sacredSanataniGrid">
+        <div class="sound-card" data-sacred="san_om" onclick="selectSacred(this)"><div class="emoji">🕉️</div><div class="name">Om</div></div>
+        <div class="sound-card" data-sacred="san_shiva" onclick="selectSacred(this)"><div class="emoji">🔱</div><div class="name">Namah Shivaya tone</div></div>
+        <div class="sound-card" data-sacred="san_shanti" onclick="selectSacred(this)"><div class="emoji">☮️</div><div class="name">Om Shanti</div></div>
+        <div class="sound-card" data-sacred="san_sohum" onclick="selectSacred(this)"><div class="emoji">🌬️</div><div class="name">So Hum breath</div></div>
+        <div class="sound-card" data-sacred="san_ganesha" onclick="selectSacred(this)"><div class="emoji">🪷</div><div class="name">Gam soft</div></div>
+        <div class="sound-card" data-sacred="san_heart" onclick="selectSacred(this)"><div class="emoji">💓</div><div class="name">Heart + drone</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- General -->
+  <div id="sub-sacred-general" class="sub-panel">
+    <div class="card">
+      <h3>🌍 General</h3>
+      <div class="sound-grid" id="sacredGeneralGrid">
+        <div class="sound-card" data-sacred="gen_om" onclick="selectSacred(this)"><div class="emoji">🔔</div><div class="name">Universal Om</div></div>
+        <div class="sound-card" data-sacred="gen_peace" onclick="selectSacred(this)"><div class="emoji">🕊️</div><div class="name">Peace tone</div></div>
+        <div class="sound-card" data-sacred="gen_breath" onclick="selectSacred(this)"><div class="emoji">🌬️</div><div class="name">Breath pulse</div></div>
+        <div class="sound-card" data-sacred="gen_silence" onclick="selectSacred(this)"><div class="emoji">🌑</div><div class="name">Near silence</div></div>
+        <div class="sound-card" data-sacred="gen_heart" onclick="selectSacred(this)"><div class="emoji">💓</div><div class="name">Heartbeat only</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shared controls -->
+  <div class="card">
+    <label>Heart rate (BPM)</label>
+    <input type="range" id="sacredBpm" min="50" max="90" value="66" oninput="document.getElementById('sacredBpmLbl').textContent=this.value+' BPM'">
+    <div style="text-align:center;font-size:.75rem;color:var(--muted);margin-bottom:8px"><span id="sacredBpmLbl">66 BPM</span></div>
+    <div class="volume-row">
+      <span style="font-size:.75rem;color:var(--muted)">Vol</span>
+      <input type="range" id="sacredVol" min="0" max="100" value="35" oninput="setSacredVol(this.value)">
+      <span id="sacredVolLbl" style="font-size:.75rem;width:30px">35%</span>
+    </div>
+    <label>Timer</label>
+    <select id="sacredTimer">
+      <option value="0">Until stopped</option>
+      <option value="5">5 min</option>
+      <option value="10">10 min</option>
+      <option value="15" selected>15 min</option>
+      <option value="30">30 min</option>
+    </select>
+    <div class="center-controls">
+      <button class="btn-play heal-idle" id="playSacredBtn" onclick="toggleSacred()">▶ Play</button>
+      <p id="sacredNow" style="font-size:.74rem;color:var(--gold);min-height:16px;margin:0"></p>
+    </div>
+  </div>
+</div>
+
+<div id="panel-tools" class="panel">
+  <div class="card">
+    <h3>⏱ Timer</h3>
+    <div class="row">
+      <div><label>Minutes</label><input type="number" id="timerMin" value="5" min="0" max="180"></div>
+      <div><label>Seconds</label><input type="number" id="timerSec" value="0" min="0" max="59"></div>
+    </div>
+    <div class="big-timer" id="timerDisplay">05:00</div>
+    <div class="btn-row">
+      <button class="btn btn-green" onclick="startTimer()">Start</button>
+      <button class="btn btn-ghost" onclick="pauseTimer()">Pause</button>
+      <button class="btn btn-red" onclick="resetTimer()">Reset</button>
+    </div>
+  </div>
+  <div class="card">
+    <h3>🏁 Stopwatch</h3>
+    <div class="big-timer" id="swDisplay">00:00:00.00</div>
+    <div class="btn-row">
+      <button class="btn btn-green" onclick="startSW()">Start</button>
+      <button class="btn btn-ghost" onclick="pauseSW()">Pause</button>
+      <button class="btn btn-red" onclick="resetSW()">Reset</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== STATS ===== -->
+
+<!-- ===== PROFILE ===== -->
+
+<!-- ===== PROFILE ===== -->
+
+<!-- ===== PROFILE ===== -->
+<div id="panel-profile" class="panel">
+  <div class="card" style="text-align:center;padding-top:18px">
+    <div style="position:relative;display:inline-block;margin-bottom:8px">
+      <div class="profile-avatar" id="profileAvatar" onclick="document.getElementById('photoInput').click()" title="Change photo" style="cursor:pointer;overflow:hidden;width:80px;height:80px;font-size:2.2rem">
+        <img id="profilePhotoImg" src="" alt="" style="width:100%;height:100%;object-fit:cover;display:none;border-radius:50%">
+        <span id="profilePhotoEmoji">⏰</span>
+      </div>
+      <div style="position:absolute;bottom:0;right:0;background:var(--gold);color:#0f172a;width:24px;height:24px;border-radius:50%;font-size:.7rem;display:flex;align-items:center;justify-content:center;border:2px solid var(--card)">📷</div>
+      <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="onPhotoSelected(event)">
+    </div>
+    <h3 style="margin:0 0 2px;font-size:1.15rem" id="profileNameDisplay">Your Name</h3>
+    <p style="font-size:.78rem;color:var(--muted);margin:0 0 6px" id="profileMetaDisplay">Set up your profile below</p>
+    <p id="cloudPhotoStatus" style="font-size:.68rem;color:var(--green);min-height:14px;margin:0"></p>
+  </div>
+
+  <div class="card">
+    <h3>👤 Profile Details</h3>
+    <label>Name</label>
+    <input type="text" id="profName" placeholder="Your name" maxlength="40">
+    <div class="row">
+      <div>
+        <label>Age</label>
+        <input type="number" id="profAge" placeholder="Age" min="1" max="120">
+      </div>
+      <div>
+        <label>Gender</label>
+        <select id="profGender">
+          <option value="">Prefer not to say</option>
+          <option value="female">Female</option>
+          <option value="male">Male</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+    </div>
+    <label>About</label>
+    <input type="text" id="profBio" placeholder="Heavy sleeper, early riser..." maxlength="100">
+    <div class="center-controls" style="margin-top:10px;gap:8px">
+      <button class="btn-play idle" style="width:85%;max-width:240px" onclick="saveProfile()">💾 Save Profile</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>☁️ Photo Storage</h3>
+    <p style="font-size:.72rem;color:var(--muted);margin:0 0 8px;line-height:1.45">
+      Photos are compressed and stored on this device by default.
+      Optional cloud upload uses <strong>ImgBB</strong> (HTTPS). Add your free API key from
+      <span style="color:var(--gold)">api.imgbb.com</span> — key stays only on your device.
+    </p>
+    <label>ImgBB API key (optional)</label>
+    <input type="password" id="imgbbKey" placeholder="Paste API key for cloud photos" autocomplete="off">
+    <div class="row" style="margin-top:4px">
+      <button class="btn-slim" style="border:1px solid var(--border);background:transparent;color:var(--muted)" onclick="saveImgbbKey()">Save Key</button>
+      <button class="btn-slim" style="border:1px solid var(--border);background:transparent;color:var(--muted)" onclick="clearImgbbKey()">Clear Key</button>
+    </div>
+    <p id="imgbbKeyStatus" style="font-size:.68rem;color:var(--muted);margin:8px 0 0"></p>
+  </div>
+
+  <div class="card">
+    <h3>📤 Share</h3>
+    <p style="font-size:.74rem;color:var(--muted);margin:0 0 10px">Share your wake-up streak or invite friends.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <button class="btn-slim" style="background:var(--card2);border:1px solid var(--border);color:var(--text)" onclick="shareNative()">📱 Share</button>
+      <button class="btn-slim" style="background:var(--card2);border:1px solid var(--border);color:var(--text)" onclick="shareCopy()">📋 Copy text</button>
+      <button class="btn-slim" style="background:#1da1f2;border:none;color:#fff" onclick="shareTwitter()">𝕏 Post</button>
+      <button class="btn-slim" style="background:#25d366;border:none;color:#fff" onclick="shareWhatsApp()">WhatsApp</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📈 Your Stats</h3>
+    <div class="stat-grid">
+      <div class="stat-box"><div class="num" id="statStreak">0</div><div class="lbl">Day Streak</div></div>
+      <div class="stat-box"><div class="num" id="statSuccess">0%</div><div class="lbl">Success Rate</div></div>
+      <div class="stat-box"><div class="num" id="statTotal">0</div><div class="lbl">Dismissed</div></div>
+      <div class="stat-box"><div class="num" id="statSnooze">0</div><div class="lbl">Snoozes</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>⚙️ Settings</h3>
+    <label style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+      <input type="checkbox" id="prefVibrate" checked style="width:auto;margin:0"> Vibrate on alarm
+    </label>
+    <label style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+      <input type="checkbox" id="prefKeepAwake" style="width:auto;margin:0"> Keep screen on
+    </label>
+    <label style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+      <input type="checkbox" id="prefAppLock" style="width:auto;margin:0" onchange="toggleAppLockSetting(this.checked)"> App lock (PIN)
+    </label>
+    <button class="btn-slim" style="margin-bottom:6px;border:1px solid var(--border);background:transparent;color:var(--muted);width:100%" onclick="setPinPrompt()">Set / Change PIN</button>
+    <button class="btn-slim" style="margin-bottom:6px;border:1px solid var(--border);background:transparent;color:var(--muted);width:100%" onclick="resetStats()">Reset Stats</button>
+    <button class="btn-slim" style="border:1px solid var(--border);background:transparent;color:var(--muted);width:100%" onclick="exportData()">Export Alarms JSON</button>
+  </div>
+
+  <div class="card">
+    <h3>🌙 Nightstand</h3>
+    <p style="font-size:.74rem;color:var(--muted);margin:0 0 10px">Dim full-screen clock. Tap 🌙 in the header or the button below.</p>
+    <button class="btn-slim" style="background:linear-gradient(135deg,#fbbf24,#d97706);color:#0f172a;border:none;width:100%" onclick="toggleNightstand()">Enter Nightstand</button>
+  </div>
+</div>
+
+<!-- ALARM MODAL -->
+<div class="modal" id="alarmModal">
+  <h2 id="modalTitle">🚨 ALARM RINGING</h2>
+  <p id="modalLabel" style="color:var(--muted);margin:0"></p>
+  <div class="vol-bar"><div class="vol-fill" id="volFill"></div></div>
+  <div class="mission-box" id="missionBox"></div>
+  <div class="snooze-bar" id="snoozeBar">
+    <button class="btn btn-ghost" style="flex:1" onclick="snoozeAlarm()">Snooze</button>
+    <button class="btn btn-green" style="flex:1;display:none" id="dismissBtn" onclick="dismissSuccess()">Dismiss</button>
+  </div>
+</div>
+
+<div class="onboard" id="onboard">
+  <div style="font-size:2.8rem;margin-bottom:10px">⏰</div>
+  <h2 style="color:var(--gold)">SmartAlarm</h2>
+  <p style="color:var(--muted);font-size:.9rem;max-width:300px;line-height:1.5">
+    Heavy-sleeper alarms · Wake-up missions · Frequency healing · Rich soundscapes
+  </p>
+  <button class="btn btn-primary" style="margin-top:22px;max-width:260px" onclick="finishOnboard()">Get Started →</button>
+</div>
+<div class="toast" id="toast"></div>
 
 <script>
-    let currentLang = localStorage.getItem('smart_alarm_lang') || 'en';
-    document.getElementById('langSelect').value = currentLang;
+/* ============================================================
+   SmartAlarm v3 – Loud sounds, Frequency Healing, New Missions
+   ============================================================ */
 
-    let alarms = JSON.parse(localStorage.getItem('smart_alarm_list')) || [
-        { time: '07:00', label: 'Morning Routine', sound: 'loud', mission: 'math', active: true }
-    ];
+const STORAGE_KEY = 'smartalarm_v3';
+const STATS_KEY = 'smartalarm_stats_v3';
+const ONBOARD_KEY = 'smartalarm_onboarded_v3';
 
-    let currentMissionType = 'math';
-    let missionTargetValue = null;
-    let ringingAlarmIndex = null;
+// ---- Sound libraries ----
+const ALARM_SOUNDS = {
+  soothing: [
+    {id:'gentle', name:'Gentle Chime Fade'},
+    {id:'softbells', name:'Soft Temple Bells'},
+    {id:'piano', name:'Morning Piano'},
+    {id:'birds', name:'Nature Birds'},
+    {id:'flute', name:'Soft Flute'},
+    {id:'harp', name:'Harp Arpeggio'},
+    {id:'rainfade', name:'Rain Fade-In'},
+    {id:'om', name:'Soft Om Tone'}
+  ],
+  moderate: [
+    {id:'classic', name:'Classic Beep'},
+    {id:'digital', name:'Digital Clock'},
+    {id:'marimba', name:'Marimba'},
+    {id:'guitar', name:'Acoustic Strum'},
+    {id:'xylophone', name:'Xylophone'},
+    {id:'upbeat', name:'Upbeat Melody'},
+    {id:'radio', name:'Radio Static Wake'}
+  ],
+  loud: [
+    {id:'siren', name:'Loud Siren'},
+    {id:'buzzer', name:'Factory Buzzer'},
+    {id:'horn', name:'Car Horn'},
+    {id:'klaxon', name:'Klaxon'},
+    {id:'alarmclock', name:'Traditional Bell'},
+    {id:'whistle', name:'Referee Whistle'},
+    {id:'foghorn', name:'Fog Horn'}
+  ],
+  extreme: [
+    {id:'airhorn', name:'Extreme Air Horn'},
+    {id:'screech', name:'Metal Screech'},
+    {id:'nuke', name:'Nuclear Alert'},
+    {id:'dualtone', name:'Dual Harsh Tone'},
+    {id:'pulseblast', name:'Pulse Blast'},
+    {id:'maxbuzz', name:'Max Volume Buzz'},
+    {id:'chaos', name:'Chaos Multi-Tone'}
+  ],
+  random: [{id:'random', name:'🎲 Rotate Random Loud'}]
+};
 
-    const translations = {
-        en: {
-            title: "SmartAlarm",
-            tabAlarm: "Alarms",
-            tabSounds: "Soundscapes",
-            tabStopwatch: "Stopwatch",
-            lblSetAlarm: "Set New Alarm",
-            lblAlarmLabel: "Alarm Label",
-            lblSoundChoice: "Alarm Sound",
-            lblMissionChoice: "Wake-Up Mission",
-            addAlarmBtn: "Add Smart Alarm",
-            lblSoundscapeTitle: "Relaxing White Noise",
-            lblSoundscapeDesc: "Fall asleep faster with ambient audio tracks.",
-            modalAlert: "🚨 SMART ALARM RINGING! 🚨",
-            missionInstruction: "Complete your wake-up mission to dismiss:"
-        },
-        hi: {
-            title: "स्मार्ट अलार्म",
-            tabAlarm: "अलार्म",
-            tabSounds: "साउंडस्केप",
-            tabStopwatch: "स्टॉपवॉच",
-            lblSetAlarm: "नया अलार्म सेट करें",
-            lblAlarmLabel: "अलार्म का नाम",
-            lblSoundChoice: "अलार्म ध्वनि",
-            lblMissionChoice: "वेक-अप मिशन",
-            addAlarmBtn: "स्मार्ट अलार्म जोड़ें",
-            lblSoundscapeTitle: "विश्रामदायक व्हाइट नॉइज",
-            lblSoundscapeDesc: "नींद जल्दी लाने के लिए सुखदायक ध्वनियाँ।",
-            modalAlert: "🚨 स्मार्ट अलार्म बज रहा है! 🚨",
-            missionInstruction: "अलार्म बंद करने के लिए अपना मिशन पूरा करें:"
-        },
-        ar: {
-            title: "منبه ذكي",
-            tabAlarm: "المنبهات",
-            tabSounds: "أصوات الاسترخاء",
-            tabStopwatch: "ساعة الإيقاف",
-            lblSetAlarm: "ضبط منبه جديد",
-            lblAlarmLabel: "تسمية المنبه",
-            lblSoundChoice: "نغمة المنبه",
-            lblMissionChoice: "مهمة الاستيقاظ",
-            addAlarmBtn: "إضافة منبه ذكي",
-            lblSoundscapeTitle: "أصوات النوم الهادئة",
-            lblSoundscapeDesc: "انمِ بعمق مع أصوات الخلفية المريحة.",
-            modalAlert: "🚨 المنبه الذكي يرن! 🚨",
-            missionInstruction: "أكمل مهمة الاستيقاظ لإيقاف المنبه:"
-        }
-    };
+const HEALING_FREQS = {
+  solfeggio: [
+    {hz:174, name:'Pain Relief'},
+    {hz:285, name:'Tissue Repair'},
+    {hz:396, name:'Liberate Fear'},
+    {hz:417, name:'Facilitate Change'},
+    {hz:528, name:'DNA / Miracle'},
+    {hz:639, name:'Relationships'},
+    {hz:741, name:'Expression'},
+    {hz:852, name:'Intuition'},
+    {hz:963, name:'Divine / Pineal'}
+  ],
+  earth: [
+    {hz:7.83, name:'Schumann Resonance'},
+    {hz:40, name:'Gamma Focus'},
+    {hz:10, name:'Alpha Calm'},
+    {hz:6, name:'Theta Meditation'},
+    {hz:4, name:'Delta Deep Sleep'},
+    {hz:432, name:'Natural Tuning'},
+    {hz:440, name:'Standard A'}
+  ],
+  chakra: [
+    {hz:256, name:'Root (C)'},
+    {hz:288, name:'Sacral (D)'},
+    {hz:320, name:'Solar (E)'},
+    {hz:341, name:'Heart (F)'},
+    {hz:384, name:'Throat (G)'},
+    {hz:426, name:'Third Eye (A)'},
+    {hz:480, name:'Crown (B)'}
+  ],
+  special: [
+    {hz:111, name:'Cellular Healing'},
+    {hz:222, name:'Balance'},
+    {hz:333, name:'Protection'},
+    {hz:444, name:'Angelic'},
+    {hz:555, name:'Transformation'},
+    {hz:666, name:'Carbon / Matter'},
+    {hz:777, name:'Spiritual'},
+    {hz:888, name:'Abundance'},
+    {hz:999, name:'Completion'},
+    {hz:136.1, name:'OM / Earth Year'},
+    {hz:144, name:'Heart Coherence'},
+    {hz:0, name:'Brown Noise Heal'} // special noise
+  ]
+};
 
-    function changeLanguage(lang) {
-        currentLang = lang;
-        localStorage.setItem('smart_alarm_lang', lang);
-        applyTranslations();
+let state = {
+  alarms: [],
+  stats: {streak:0, lastSuccessDate:null, totalDismissed:0, totalSnoozes:0, totalTriggered:0},
+  selectedDays: [1,2,3,4,5],
+  ringing: null,
+  soundscape: null,
+  healOsc: null,
+  audioCtx: null,
+  oscillators: [],
+  sleepTimerId: null,
+  healTimerId: null,
+  timerInterval: null,
+  timerRemaining: 0,
+  timerPaused: true,
+  swInterval: null,
+  swTime: 0,
+  swRunning: false,
+  sunriseInterval: null,
+  volumeInterval: null,
+  vibrateInterval: null,
+  soundVol: 0.4,
+  healVol: 0.25,
+  lullabyVol: 0.35,
+  currentHeal: null,
+  currentSound: 'rain',
+  currentLullaby: 'twinkle',
+  lullabyNodes: null,
+  lullabyTimerId: null,
+  lullabyInterval: null,
+  currentBin: 'theta4',
+  currentSacred: 'san_om',
+  sacredVol: 0.35,
+  sacredNodes: null,
+  sacredInterval: null,
+  sacredTimerId: null,
+  currentSpirit: 'allah',
+  spiritVol: 0.4,
+  spiritNodes: null,
+  spiritAudio: null,
+  spiritTimerId: null,
+  spiritInterval: null,
+  spiritSpeechTimer: null,
+  binVol: 0.30,
+  binNodes: null,
+  binTimerId: null
+};
+
+// ---------- Persistence ----------
+function load() {
+  try {
+    const r = localStorage.getItem(STORAGE_KEY);
+    if (r) state.alarms = JSON.parse(r);
+    const s = localStorage.getItem(STATS_KEY);
+    if (s) state.stats = JSON.parse(s);
+  } catch(e){}
+}
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state.alarms));
+  localStorage.setItem(STATS_KEY, JSON.stringify(state.stats));
+}
+
+// ---------- UI helpers ----------
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2300);
+}
+function switchTab(name, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  const panel = document.getElementById('panel-' + name);
+  if (panel) panel.classList.add('active');
+  if (btn) btn.classList.add('active');
+  else {
+    const b = document.querySelector(`[data-tab="${name}"]`);
+    if (b) b.classList.add('active');
+  }
+  if (name === 'profile') { updateStatsUI(); loadProfile(); }
+}
+function switchSub(section, name, btn) {
+  const prefixMap = { sleep: 'sub-sleep-', heal: 'sub-heal-', sacred: 'sub-sacred-' };
+  const prefix = prefixMap[section] || ('sub-' + section + '-');
+  document.querySelectorAll(`[id^="${prefix}"]`).forEach(p => p.classList.remove('active'));
+  const panel = document.getElementById(prefix + name);
+  if (panel) panel.classList.add('active');
+  const container = btn ? btn.parentElement : null;
+  if (container) {
+    container.querySelectorAll('.sub-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+}
+
+// ---------- Populate alarm sounds ----------
+function populateAlarmSounds() {
+  const cat = document.getElementById('alarmSoundCat').value;
+  const sel = document.getElementById('alarmSound');
+  sel.innerHTML = '';
+  (ALARM_SOUNDS[cat] || []).forEach(s => {
+    const o = document.createElement('option');
+    o.value = s.id;
+    o.textContent = s.name;
+    sel.appendChild(o);
+  });
+}
+
+// ---------- Frequency cards ----------
+function buildFreqGrids() {
+  function fill(id, list, cat) {
+    const el = document.getElementById(id);
+    el.innerHTML = '';
+    list.forEach(f => {
+      const d = document.createElement('div');
+      d.className = 'freq-card';
+      d.dataset.hz = f.hz;
+      d.dataset.name = f.name;
+      d.dataset.cat = cat;
+      d.innerHTML = `<span class="hz">${f.hz || 'Noise'}${f.hz ? ' Hz' : ''}</span><span class="lbl">${f.name}</span>`;
+      d.onclick = () => selectFreq(d, f);
+      el.appendChild(d);
+    });
+  }
+  fill('freqSolfeggio', HEALING_FREQS.solfeggio, 'solfeggio');
+  fill('freqEarth', HEALING_FREQS.earth, 'earth');
+  fill('freqChakra', HEALING_FREQS.chakra, 'chakra');
+  fill('freqSpecial', HEALING_FREQS.special, 'special');
+}
+function selectFreq(el, f) {
+  document.querySelectorAll('.freq-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  state.currentHeal = f;
+  document.getElementById('healNowPlaying').textContent = `Selected: ${f.hz ? f.hz+' Hz' : 'Noise'} – ${f.name}`;
+}
+
+// ---------- Clock ----------
+function tick() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  const s = String(now.getSeconds()).padStart(2,'0');
+  document.getElementById('liveClock').textContent = `${h}:${m}:${s}`;
+  document.getElementById('liveDate').textContent = now.toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'short',day:'numeric'});
+  updateNextAlarmInfo(now);
+  if (s === '00' && !state.ringing) {
+    const timeStr = `${h}:${m}`;
+    const dow = now.getDay();
+    state.alarms.forEach((a,i) => {
+      if (!a.active) return;
+      if (a.time !== timeStr) return;
+      if (a.days && a.days.length && !a.days.includes(dow)) return;
+      triggerAlarm(i);
+    });
+  }
+  const bedOn = document.getElementById('bedtimeOn')?.checked;
+  const bedTime = document.getElementById('bedtime')?.value;
+  if (bedOn && bedTime === `${h}:${m}` && s === '00') {
+    toast('🛏 Time to wind down');
+    if (navigator.vibrate) navigator.vibrate([200,100,200]);
+  }
+}
+setInterval(tick, 1000);
+
+function updateNextAlarmInfo(now) {
+  let soonest = null;
+  const nowMin = now.getHours()*60 + now.getMinutes();
+  state.alarms.filter(a => a.active).forEach(a => {
+    const [hh,mm] = a.time.split(':').map(Number);
+    let mins = hh*60 + mm;
+    let delta = mins - nowMin;
+    if (delta <= 0) delta += 24*60;
+    if (!soonest || delta < soonest.delta) soonest = {alarm:a, delta};
+  });
+  const el = document.getElementById('nextAlarmInfo');
+  if (soonest) {
+    const hrs = Math.floor(soonest.delta/60);
+    const mins = soonest.delta % 60;
+    el.textContent = `Next: ${soonest.alarm.time} (${soonest.alarm.label}) in ${hrs}h ${mins}m`;
+  } else el.textContent = 'No active alarms';
+}
+
+// Day chips
+document.getElementById('dayChips').addEventListener('click', e => {
+  const chip = e.target.closest('.day-chip');
+  if (!chip) return;
+  chip.classList.toggle('on');
+  state.selectedDays = [...document.querySelectorAll('.day-chip.on')].map(c => +c.dataset.d);
+});
+document.querySelectorAll('.day-chip').forEach(c => {
+  if ([1,2,3,4,5].includes(+c.dataset.d)) c.classList.add('on');
+});
+
+// ---------- Alarms CRUD ----------
+function addAlarm() {
+  const time = document.getElementById('alarmTime').value;
+  if (!time) return toast('Pick a time');
+  const label = document.getElementById('alarmLabel').value.trim() || 'Alarm';
+  const sound = document.getElementById('alarmSound').value;
+  const soundCat = document.getElementById('alarmSoundCat').value;
+  const mission = document.getElementById('alarmMission').value;
+  const snoozeMin = +document.getElementById('alarmSnooze').value;
+  const maxSnooze = +document.getElementById('alarmMaxSnooze').value;
+  const gradual = document.getElementById('gradualVol').checked;
+  const days = [...state.selectedDays];
+  state.alarms.push({id:Date.now(), time, label, sound, soundCat, mission, snoozeMin, maxSnooze, gradual, days, active:true});
+  save(); renderAlarms(); toast('Alarm added ✓');
+  document.getElementById('alarmLabel').value = '';
+}
+function toggleAlarm(i){ state.alarms[i].active = !state.alarms[i].active; save(); renderAlarms(); }
+function deleteAlarm(i){ if(!confirm('Delete?'))return; state.alarms.splice(i,1); save(); renderAlarms(); }
+function renderAlarms(){
+  const box = document.getElementById('alarmList');
+  if (!state.alarms.length) {
+    box.innerHTML = '<p style="text-align:center;color:var(--muted);font-size:.85rem">No alarms yet.</p>';
+    return;
+  }
+  const dayNames = ['S','M','T','W','T','F','S'];
+  box.innerHTML = state.alarms.map((a,i) => {
+    const daysStr = (a.days&&a.days.length) ? a.days.map(d=>dayNames[d]).join(' ') : 'Once';
+    return `<div class="alarm-item">
+      <div><div class="time">${a.time}</div>
+      <div class="meta">${a.label} · ${a.mission} · ${a.sound} · ${daysStr}</div></div>
+      <div class="actions">
+        <div class="toggle ${a.active?'on':''}" onclick="toggleAlarm(${i})"></div>
+        <button class="del-btn" onclick="deleteAlarm(${i})">✕</button>
+      </div></div>`;
+  }).join('');
+  updateNextAlarmInfo(new Date());
+}
+
+// ---------- Trigger & Missions ----------
+function triggerAlarm(index) {
+  const a = state.alarms[index];
+  state.ringing = {index, startedAt:Date.now(), snoozeCount:0, volume: a.gradual?0.05:0.75, gradual:a.gradual};
+  state.stats.totalTriggered++; save();
+  document.getElementById('modalTitle').textContent = '🚨 ALARM RINGING';
+  document.getElementById('modalLabel').textContent = a.label + ' · ' + a.time;
+  document.getElementById('alarmModal').classList.add('show');
+  setupMission(a.mission);
+  startAlarmSound(a.sound, a.soundCat, state.ringing.volume);
+  if (a.gradual) { startVolumeRamp(); startSunrise(); }
+  if (document.getElementById('prefVibrate').checked && navigator.vibrate) {
+    state.vibrateInterval = setInterval(() => navigator.vibrate(400), 1100);
+  }
+}
+
+function setupMission(type) {
+  const box = document.getElementById('missionBox');
+  const dismissBtn = document.getElementById('dismissBtn');
+  dismissBtn.style.display = 'none';
+  box.innerHTML = '';
+
+  if (type === 'none') {
+    box.innerHTML = '<p style="color:var(--muted)">No mission required.</p>';
+    dismissBtn.style.display = 'block';
+    return;
+  }
+  if (type === 'math' || type === 'math2') {
+    const hard = type === 'math2';
+    const n1 = hard ? Math.floor(Math.random()*40)+10 : Math.floor(Math.random()*12)+3;
+    const n2 = hard ? Math.floor(Math.random()*25)+5 : Math.floor(Math.random()*12)+3;
+    const op = hard && Math.random()>0.4 ? '*' : '+';
+    const ans = op==='*' ? n1*n2 : n1+n2;
+    state.ringing.missionAnswer = ans;
+    box.innerHTML = `<div class="math-q">${n1} ${op} ${n2} = ?</div>
+      <input type="number" id="missionInput" placeholder="Answer" style="text-align:center;font-size:1.15rem">
+      <button class="btn btn-green" style="margin-top:10px" onclick="checkMath()">Submit</button>`;
+    return;
+  }
+  if (type === 'type') {
+    const phrases = ['WAKE UP NOW','I AM AWAKE','GET OUT OF BED','RISE AND SHINE','TIME TO START'];
+    const phrase = phrases[Math.floor(Math.random()*phrases.length)];
+    state.ringing.missionAnswer = phrase;
+    box.innerHTML = `<p style="color:var(--gold)">Type exactly:</p>
+      <p style="font-weight:700;letter-spacing:1px;margin:6px 0">${phrase}</p>
+      <input type="text" id="missionInput" placeholder="Type here" style="text-align:center">
+      <button class="btn btn-green" style="margin-top:10px" onclick="checkType()">Submit</button>`;
+    return;
+  }
+  if (type === 'shake') {
+    state.ringing.shakeLeft = 18;
+    box.innerHTML = `<div class="shake-count" id="shakeCount">Shakes left: 18</div>
+      <p style="color:var(--muted);font-size:.82rem">Shake phone or tap button</p>
+      <button class="btn btn-green" style="margin-top:10px" onclick="registerShake()">📱 Shake / Tap</button>`;
+    if (window.DeviceMotionEvent) window.addEventListener('devicemotion', onDeviceMotion);
+    return;
+  }
+  if (type === 'memory') {
+    const colors = ['#ef4444','#34d399','#60a5fa','#fbbf24'];
+    const seq = [];
+    for (let i=0;i<4;i++) seq.push(colors[Math.floor(Math.random()*colors.length)]);
+    state.ringing.memorySeq = seq; state.ringing.memoryIdx = 0;
+    box.innerHTML = `<p style="color:var(--muted);margin-bottom:8px">Memorize then repeat</p>
+      <div id="memSeq" style="display:flex;gap:8px;justify-content:center;margin-bottom:12px"></div>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap" id="memBtns"></div>`;
+    const seqEl = document.getElementById('memSeq');
+    seq.forEach(c => { const d=document.createElement('div'); d.style.cssText=`width:34px;height:34px;border-radius:8px;background:${c}`; seqEl.appendChild(d); });
+    setTimeout(() => {
+      seqEl.innerHTML = '<span style="color:var(--muted)">Now repeat</span>';
+      const btns = document.getElementById('memBtns');
+      colors.forEach(c => {
+        const b = document.createElement('button');
+        b.style.cssText = `width:46px;height:46px;border-radius:10px;border:none;background:${c};cursor:pointer`;
+        b.onclick = () => checkMemory(c);
+        btns.appendChild(b);
+      });
+    }, 1600);
+    return;
+  }
+  if (type === 'pics') {
+    // Picture matching (emoji pairs)
+    const emojis = ['🐶','🐱','🦊','🐻','🐼','🐨','🦁','🐸'];
+    const pair = emojis[Math.floor(Math.random()*emojis.length)];
+    const others = emojis.filter(e => e !== pair).slice(0,5);
+    let cards = [pair, pair, ...others];
+    cards = cards.sort(() => Math.random()-0.5);
+    state.ringing.picTarget = pair;
+    state.ringing.picSelected = [];
+    box.innerHTML = `<p style="color:var(--muted);margin-bottom:10px">Find the matching pair</p>
+      <div class="pic-grid" id="picGrid"></div>`;
+    const grid = document.getElementById('picGrid');
+    cards.forEach((em, idx) => {
+      const d = document.createElement('div');
+      d.className = 'pic-card';
+      d.dataset.em = em;
+      d.dataset.idx = idx;
+      d.textContent = '❓';
+      d.onclick = () => flipPic(d);
+      grid.appendChild(d);
+    });
+    return;
+  }
+  if (type === 'selfie') {
+    box.innerHTML = `<p style="color:var(--muted);margin-bottom:8px">Take a selfie to prove you're up!</p>
+      <video id="selfiePreview" autoplay playsinline muted></video>
+      <canvas id="selfieCanvas" style="display:none"></canvas>
+      <button class="btn btn-green" id="captureBtn" onclick="captureSelfie()">📸 Capture Selfie</button>
+      <p id="selfieStatus" style="font-size:.78rem;color:var(--muted);margin-top:8px"></p>`;
+    startCamera();
+    return;
+  }
+}
+
+function checkMath() {
+  const val = parseInt(document.getElementById('missionInput').value,10);
+  if (val === state.ringing.missionAnswer) dismissSuccess();
+  else toast('Wrong – try again');
+}
+function checkType() {
+  const val = (document.getElementById('missionInput').value||'').trim().toUpperCase();
+  if (val === state.ringing.missionAnswer) dismissSuccess();
+  else toast('Type the phrase exactly');
+}
+function registerShake() {
+  if (!state.ringing || state.ringing.shakeLeft === undefined) return;
+  state.ringing.shakeLeft--;
+  document.getElementById('shakeCount').textContent = `Shakes left: ${state.ringing.shakeLeft}`;
+  if (state.ringing.shakeLeft <= 0) {
+    window.removeEventListener('devicemotion', onDeviceMotion);
+    dismissSuccess();
+  }
+}
+let lastShake = 0;
+function onDeviceMotion(e) {
+  const acc = e.accelerationIncludingGravity;
+  if (!acc) return;
+  const force = Math.abs(acc.x)+Math.abs(acc.y)+Math.abs(acc.z);
+  if (force > 22 && Date.now()-lastShake > 350) {
+    lastShake = Date.now();
+    registerShake();
+  }
+}
+function checkMemory(color) {
+  const r = state.ringing;
+  if (r.memorySeq[r.memoryIdx] === color) {
+    r.memoryIdx++;
+    if (r.memoryIdx >= r.memorySeq.length) dismissSuccess();
+  } else {
+    toast('Wrong – sequence reset');
+    r.memoryIdx = 0;
+  }
+}
+
+// Picture matching
+function flipPic(el) {
+  if (el.classList.contains('flipped') || el.classList.contains('matched')) return;
+  if (state.ringing.picSelected.length >= 2) return;
+  el.textContent = el.dataset.em;
+  el.classList.add('flipped');
+  state.ringing.picSelected.push(el);
+  if (state.ringing.picSelected.length === 2) {
+    const [a,b] = state.ringing.picSelected;
+    if (a.dataset.em === b.dataset.em && a.dataset.em === state.ringing.picTarget) {
+      a.classList.add('matched'); b.classList.add('matched');
+      setTimeout(() => dismissSuccess(), 400);
+    } else if (a.dataset.em === b.dataset.em) {
+      // matched wrong pair – still allow continue but only target wins
+      a.classList.add('matched'); b.classList.add('matched');
+      state.ringing.picSelected = [];
+      toast('Nice match, but find the target pair!');
+    } else {
+      setTimeout(() => {
+        a.textContent = '❓'; b.textContent = '❓';
+        a.classList.remove('flipped'); b.classList.remove('flipped');
+        state.ringing.picSelected = [];
+      }, 700);
     }
+  }
+}
 
-    function applyTranslations() {
-        let t = translations[currentLang] || translations['en'];
-        document.getElementById('appTitle').textContent = t.title;
-        document.getElementById('tabAlarmBtn').textContent = t.tabAlarm;
-        document.getElementById('tabSoundsBtn').textContent = t.tabSounds;
-        document.getElementById('tabStopwatchBtn').textContent = t.tabStopwatch;
-        document.getElementById('lblSetAlarm').textContent = t.lblSetAlarm;
-        document.getElementById('lblAlarmLabel').textContent = t.lblAlarmLabel;
-        document.getElementById('lblSoundChoice').textContent = t.lblSoundChoice;
-        document.getElementById('lblMissionChoice').textContent = t.lblMissionChoice;
-        document.getElementById('addAlarmBtn').textContent = t.addAlarmBtn;
-        document.getElementById('lblSoundscapeTitle').textContent = t.lblSoundscapeTitle;
-        document.getElementById('lblSoundscapeDesc').textContent = t.lblSoundscapeDesc;
-        document.getElementById('modalAlarmAlert').textContent = t.modalAlert;
-        document.getElementById('modalMissionInstruction').textContent = t.missionInstruction;
+// Selfie mission
+async function startCamera() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}, audio:false});
+    const vid = document.getElementById('selfiePreview');
+    if (vid) {
+      vid.srcObject = stream;
+      state.ringing.cameraStream = stream;
     }
+  } catch(e) {
+    document.getElementById('selfieStatus').textContent = 'Camera blocked – tap Capture to simulate success';
+    document.getElementById('captureBtn').onclick = () => dismissSuccess();
+  }
+}
+function captureSelfie() {
+  const vid = document.getElementById('selfiePreview');
+  const canvas = document.getElementById('selfieCanvas');
+  if (vid && vid.srcObject && canvas) {
+    canvas.width = vid.videoWidth || 320;
+    canvas.height = vid.videoHeight || 240;
+    canvas.getContext('2d').drawImage(vid, 0, 0);
+    document.getElementById('selfieStatus').textContent = 'Selfie captured! ✓';
+  }
+  // stop camera
+  if (state.ringing.cameraStream) {
+    state.ringing.cameraStream.getTracks().forEach(t => t.stop());
+  }
+  setTimeout(() => dismissSuccess(), 600);
+}
 
-    function switchTab(tabName, btnEl) {
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-        document.getElementById('tab-' + tabName).classList.add('active');
-        btnEl.classList.add('active');
+function dismissSuccess() {
+  stopAlarmSound();
+  stopSunrise();
+  clearInterval(state.vibrateInterval);
+  if (state.ringing?.cameraStream) state.ringing.cameraStream.getTracks().forEach(t=>t.stop());
+  document.getElementById('alarmModal').classList.remove('show');
+  state.stats.totalDismissed++;
+  const today = new Date().toDateString();
+  if (state.stats.lastSuccessDate !== today) {
+    const y = new Date(); y.setDate(y.getDate()-1);
+    state.stats.streak = (state.stats.lastSuccessDate === y.toDateString()) ? state.stats.streak+1 : 1;
+    state.stats.lastSuccessDate = today;
+  }
+  save(); updateStatsUI();
+  const a = state.alarms[state.ringing.index];
+  if (!a.days || !a.days.length) a.active = false;
+  state.ringing = null;
+  renderAlarms();
+  toast('You\'re awake! 🔥');
+}
+
+function snoozeAlarm() {
+  if (!state.ringing) return;
+  const a = state.alarms[state.ringing.index];
+  if (a.maxSnooze > 0 && state.ringing.snoozeCount >= a.maxSnooze) {
+    toast('No more snoozes – finish the mission!');
+    return;
+  }
+  state.ringing.snoozeCount++;
+  state.stats.totalSnoozes++;
+  save(); updateStatsUI();
+  stopAlarmSound(); stopSunrise();
+  clearInterval(state.vibrateInterval);
+  document.getElementById('alarmModal').classList.remove('show');
+  const mins = a.snoozeMin || 5;
+  toast(`Snoozed ${mins} min`);
+  setTimeout(() => {
+    if (!state.ringing) return;
+    document.getElementById('alarmModal').classList.add('show');
+    startAlarmSound(a.sound, a.soundCat, a.gradual ? 0.1 : 0.75);
+    if (a.gradual) { startVolumeRamp(); startSunrise(); }
+    if (document.getElementById('prefVibrate').checked && navigator.vibrate)
+      state.vibrateInterval = setInterval(() => navigator.vibrate(400), 1100);
+  }, mins * 60 * 1000);
+}
+
+// ---------- Audio Engine ----------
+function ensureAudio() {
+  if (!state.audioCtx) state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (state.audioCtx.state === 'suspended') state.audioCtx.resume();
+  return state.audioCtx;
+}
+
+function startAlarmSound(id, cat, vol) {
+  stopAlarmSound();
+  const ctx = ensureAudio();
+  const now = ctx.currentTime;
+  // Resolve random
+  if (id === 'random' || cat === 'random') {
+    const loud = ALARM_SOUNDS.extreme.concat(ALARM_SOUNDS.loud);
+    id = loud[Math.floor(Math.random()*loud.length)].id;
+  }
+
+  // Helper to create oscillator + gain
+  function tone(freq, type, gainVal, start, dur, ramp) {
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = type || 'sine';
+    osc.frequency.setValueAtTime(freq, start);
+    g.gain.setValueAtTime(0, start);
+    if (ramp) g.gain.linearRampToValueAtTime(gainVal, start + ramp);
+    else g.gain.setValueAtTime(gainVal, start);
+    if (dur) {
+      g.gain.setValueAtTime(gainVal, start + dur - 0.05);
+      g.gain.linearRampToValueAtTime(0, start + dur);
+      osc.stop(start + dur + 0.05);
     }
+    osc.connect(g); g.connect(ctx.destination);
+    osc.start(start);
+    state.oscillators.push({osc, gain:g});
+    return {osc, gain:g};
+  }
 
-    // Live Clock Engine
-    setInterval(() => {
-        let now = new Date();
-        let hours = String(now.getHours()).padStart(2, '0');
-        let minutes = String(now.getMinutes()).padStart(2, '0');
-        let seconds = String(now.getSeconds()).padStart(2, '0');
-        
-        document.getElementById('liveClock').textContent = `${hours}:${minutes}:${seconds}`;
-        document.getElementById('liveDate').textContent = now.toDateString();
-
-        let currentTimeStr = `${hours}:${minutes}`;
-        alarms.forEach((alarm, index) => {
-            if (alarm.active && alarm.time === currentTimeStr && ringingAlarmIndex === null) {
-                triggerAlarm(index);
-            }
-        });
+  if (['gentle','softbells','piano','flute','harp','om','rainfade','birds'].includes(id)) {
+    // soothing – soft rising tones
+    tone(523, 'sine', vol*0.2, now, null, 1.5);
+    tone(659, 'sine', vol*0.15, now+0.3, null, 1.2);
+    state.soundLoop = setInterval(() => {
+      if (!state.ringing) return;
+      const f = 400 + Math.random()*300;
+      tone(f, 'sine', vol*0.18, ctx.currentTime, 1.4, 0.3);
+    }, 1600);
+  } else if (['classic','digital','marimba','guitar','xylophone','upbeat','radio'].includes(id)) {
+    state.soundLoop = setInterval(() => {
+      if (!state.ringing) return;
+      const base = id==='marimba'?523: id==='xylophone'?880: 440;
+      tone(base, 'triangle', vol*0.3, ctx.currentTime, 0.35, 0.02);
+      tone(base*1.25, 'triangle', vol*0.2, ctx.currentTime+0.15, 0.3, 0.02);
+    }, 700);
+  } else if (['siren','buzzer','horn','klaxon','alarmclock','whistle','foghorn'].includes(id)) {
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(300, now);
+    osc.frequency.linearRampToValueAtTime(600, now+0.5);
+    osc.frequency.linearRampToValueAtTime(300, now+1);
+    g.gain.value = vol*0.35;
+    osc.connect(g); g.connect(ctx.destination);
+    osc.start();
+    state.oscillators.push({osc, gain:g});
+    state.soundLoop = setInterval(() => {
+      if (!state.ringing) return;
+      osc.frequency.cancelScheduledValues(ctx.currentTime);
+      osc.frequency.setValueAtTime(280, ctx.currentTime);
+      osc.frequency.linearRampToValueAtTime(650, ctx.currentTime+0.45);
+      osc.frequency.linearRampToValueAtTime(280, ctx.currentTime+0.9);
     }, 1000);
+  } else {
+    // extreme
+    const osc1 = ctx.createOscillator();
+    const osc2 = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc1.type = 'sawtooth'; osc2.type = 'square';
+    osc1.frequency.value = 180; osc2.frequency.value = 220;
+    g.gain.value = vol*0.4;
+    osc1.connect(g); osc2.connect(g); g.connect(ctx.destination);
+    osc1.start(); osc2.start();
+    state.oscillators.push({osc:osc1, gain:g}, {osc:osc2, gain:g});
+    state.soundLoop = setInterval(() => {
+      if (!state.ringing) return;
+      g.gain.setValueAtTime(vol*0.45, ctx.currentTime);
+      g.gain.linearRampToValueAtTime(vol*0.15, ctx.currentTime+0.3);
+    }, 500);
+  }
+}
 
-    function triggerAlarm(index) {
-        ringingAlarmIndex = index;
-        let mission = alarms[index].mission || 'math';
-        currentMissionType = mission;
-        
-        let container = document.getElementById('missionContainer');
-        let submitBtn = document.getElementById('dismissMissionBtn');
-        container.innerHTML = '';
+function startVolumeRamp() {
+  clearInterval(state.volumeInterval);
+  let v = state.ringing.volume;
+  const fill = document.getElementById('volFill');
+  state.volumeInterval = setInterval(() => {
+    if (!state.ringing) return;
+    v = Math.min(1, v + 0.035);
+    state.ringing.volume = v;
+    fill.style.width = (v*100)+'%';
+    state.oscillators.forEach(o => {
+      if (o.gain) try { o.gain.gain.setTargetAtTime(v*0.35, state.audioCtx.currentTime, 0.25); } catch(e){}
+    });
+  }, 1800);
+}
+function stopAlarmSound() {
+  clearInterval(state.soundLoop);
+  clearInterval(state.volumeInterval);
+  state.oscillators.forEach(({osc}) => { try{osc.stop()}catch(e){} });
+  state.oscillators = [];
+  document.getElementById('volFill').style.width = '0%';
+}
+function startSunrise() {
+  const card = document.getElementById('clockCard');
+  let step = 0;
+  state.sunriseInterval = setInterval(() => {
+    step++;
+    const r = Math.min(255, 25 + step*7);
+    const g = Math.min(170, 15 + step*4);
+    card.style.background = `linear-gradient(145deg,rgb(${r},${g},35),#0f172a)`;
+    if (step > 35) clearInterval(state.sunriseInterval);
+  }, 1800);
+}
+function stopSunrise() {
+  clearInterval(state.sunriseInterval);
+  document.getElementById('clockCard').style.background = '';
+}
 
-        if (mission === 'math') {
-            let n1 = Math.floor(Math.random() * 15) + 5;
-            let n2 = Math.floor(Math.random() * 15) + 5;
-            missionTargetValue = n1 + n2;
-            container.innerHTML = `
-                <div style="font-size: 1.8rem; font-weight: bold; color: var(--accent-gold); margin-bottom: 10px;">${n1} + ${n2} = ?</div>
-                <input type="number" id="missionInput" placeholder="Enter answer" style="text-align: center; font-size: 1.1rem;">
-            `;
-            submitBtn.style.display = 'block';
-        } else if (mission === 'type') {
-            missionTargetValue = "WAKE UP NOW";
-            container.innerHTML = `
-                <div style="font-size: 1.1rem; color: var(--accent-gold); margin-bottom: 10px;">Type: "WAKE UP NOW"</div>
-                <input type="text" id="missionInput" placeholder="Type text exactly" style="text-align: center; font-size: 1rem;">
-            `;
-            submitBtn.style.display = 'block';
-        } else if (mission === 'shake') {
-            missionTargetValue = 15; // 15 shakes required
-            container.innerHTML = `
-                <div style="font-size: 1.3rem; font-weight: bold; color: var(--accent-green); margin-bottom: 10px;" id="shakeCount">Shakes left: 15</div>
-                <button class="action-btn" onclick="registerShake()" style="background:#34d399; color:#0f172a;">📱 Tap to Shake Phone</button>
-            `;
-            submitBtn.style.display = 'none';
+// ---------- Soundscapes ----------
+function selectSound(el) {
+  document.querySelectorAll('.sound-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  state.currentSound = el.dataset.sound;
+}
+function setSoundVol(v) {
+  state.soundVol = v/100;
+  document.getElementById('soundVolLbl').textContent = v+'%';
+  if (state.soundscape?.gain) state.soundscape.gain.gain.value = state.soundVol * 0.3;
+}
+function toggleSoundscape() {
+  const btn = document.getElementById('playSoundBtn');
+  if (state.soundscape) {
+    stopSoundscape();
+    btn.textContent = '▶ Play';
+    btn.classList.remove('playing'); btn.classList.add('idle');
+  } else {
+    startSoundscape(state.currentSound);
+    btn.textContent = '⏹ Stop';
+    btn.classList.remove('idle'); btn.classList.add('playing');
+    const mins = +document.getElementById('sleepTimer').value;
+    if (mins > 0) {
+      clearTimeout(state.sleepTimerId);
+      state.sleepTimerId = setTimeout(() => {
+        stopSoundscape();
+        btn.textContent = '▶ Play';
+        btn.classList.remove('playing');
+        btn.classList.add('idle');
+        toast('Sleep timer done');
+      }, mins*60*1000);
+    }
+  }
+}
+function startSoundscape(type) {
+  stopSoundscape();
+  const ctx = ensureAudio();
+  const bufferSize = 2 * ctx.sampleRate;
+  const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i=0;i<bufferSize;i++) data[i] = Math.random()*2-1;
+  const noise = ctx.createBufferSource();
+  noise.buffer = buffer; noise.loop = true;
+  const filter = ctx.createBiquadFilter();
+  const gain = ctx.createGain();
+  gain.gain.value = state.soundVol * 0.3;
+  // Colored noise & ambience filters
+  if (type === 'white') { filter.type = 'allpass'; }
+  else if (type === 'pink') { filter.type = 'lowpass'; filter.frequency.value = 700; }
+  else if (type === 'brown') { filter.type = 'lowpass'; filter.frequency.value = 150; }
+  else if (type === 'green') { filter.type = 'bandpass'; filter.frequency.value = 500; filter.Q.value = 0.6; }
+  else if (type === 'blue') { filter.type = 'highpass'; filter.frequency.value = 800; }
+  else if (type === 'gray') { filter.type = 'peaking'; filter.frequency.value = 1000; filter.Q.value = 0.8; }
+  else if (type === 'violet') { filter.type = 'highpass'; filter.frequency.value = 2000; }
+  else if (type === 'rain' || type === 'ocean') { filter.type = 'lowpass'; filter.frequency.value = type === 'rain' ? 900 : 380; }
+  else if (type === 'fan' || type === 'fire') { filter.type = 'lowpass'; filter.frequency.value = 180; }
+  else if (type === 'thunder') { filter.type = 'lowpass'; filter.frequency.value = 250; }
+  else if (type === 'womb' || type === 'shush') { filter.type = 'lowpass'; filter.frequency.value = 220; }
+  else if (type === 'cafe') { filter.type = 'bandpass'; filter.frequency.value = 1200; filter.Q.value = 0.7; }
+  else { filter.type = 'bandpass'; filter.frequency.value = 550; }
+  noise.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+  noise.start();
+  state.soundscape = {noise, gain, filter};
+}
+function stopSoundscape() {
+  clearTimeout(state.sleepTimerId);
+  if (state.soundscape) { try{state.soundscape.noise.stop()}catch(e){} state.soundscape=null; }
+}
+
+// ---------- Children's Lullabies ----------
+
+const LULLABY_MELODIES = {
+  // Distinct melodies: different keys, rhythms, and character
+  twinkle: {
+    voice: 'sine', beat: 0.52, gain: 0.2,
+    notes: [[523,1],[523,1],[784,1],[784,1],[880,1],[880,1],[784,2],[698,1],[698,1],[659,1],[659,1],[587,1],[587,1],[523,2],[784,1],[784,1],[698,1],[698,1],[659,1],[659,1],[587,2],[523,1],[523,1],[784,1],[784,1],[880,1],[880,1],[784,2],[698,1],[698,1],[659,1],[659,1],[587,1],[587,1],[523,3]]
+  },
+  brahms: {
+    voice: 'triangle', beat: 0.7, gain: 0.18,
+    notes: [[392,2],[370,1],[349,2],[330,1],[294,2],[330,1],[349,2],[294,1],[330,2],[294,1],[262,2],[247,1],[220,3],[392,2],[370,1],[349,2],[330,1],[294,2],[330,1],[349,1],[392,1],[370,2],[349,1],[330,2],[294,3]]
+  },
+  rockaby: {
+    voice: 'sine', beat: 0.6, gain: 0.17,
+    notes: [[330,1.5],[294,0.5],[262,1],[294,1],[330,1],[330,1],[330,2],[294,1],[294,1],[294,2],[330,1],[392,1],[392,2],[330,1.5],[294,0.5],[262,1],[294,1],[330,1],[330,1],[330,1],[294,1],[294,1],[330,1],[294,1],[262,3]]
+  },
+  hush: {
+    voice: 'triangle', beat: 0.48, gain: 0.16,
+    notes: [[262,1],[294,1],[330,2],[349,1],[330,1],[294,2],[262,1],[247,1],[220,2],[196,2],[262,1],[294,1],[330,1],[349,1],[392,2],[349,1],[330,1],[294,2],[262,3]]
+  },
+  areyou: {
+    voice: 'square', beat: 0.45, gain: 0.08,
+    notes: [[262,1],[294,1],[330,1],[262,1],[262,1],[294,1],[330,1],[262,1],[330,1],[349,1],[392,2],[330,1],[349,1],[392,2],[392,0.5],[440,0.5],[392,0.5],[349,0.5],[330,1],[262,1],[262,1],[196,1],[262,2]]
+  },
+  lavender: {
+    voice: 'sine', beat: 0.55, gain: 0.19,
+    notes: [[349,1],[392,1],[440,2],[392,1],[349,1],[330,2],[294,1],[330,1],[349,2],[294,1],[262,3],[349,1],[392,1],[440,1],[494,1],[523,2],[440,1],[392,1],[349,3]]
+  },
+  allthe: {
+    voice: 'triangle', beat: 0.65, gain: 0.17,
+    notes: [[220,2],[247,1],[262,2],[294,1],[330,2],[294,1],[262,2],[247,1],[220,2],[196,3],[220,1],[247,1],[262,1],[294,1],[330,1],[294,1],[262,2],[220,3]]
+  },
+  softbox: {
+    voice: 'triangle', beat: 0.38, gain: 0.14,
+    notes: [[1047,0.5],[880,0.5],[784,0.5],[659,1],[784,0.5],[880,0.5],[1047,1],[1175,0.5],[1047,0.5],[880,0.5],[784,1],[659,0.5],[523,1.5],[784,0.5],[659,0.5],[523,2]]
+  },
+  pentatonic: {
+    voice: 'sine', beat: 0.5, gain: 0.18,
+    notes: [[262,1],[294,1],[330,1],[392,1],[440,1],[392,1],[330,1],[294,1],[262,2],[196,1],[220,1],[262,1],[294,2],[330,1],[262,1],[220,1],[196,3]]
+  },
+  oceanlull: {
+    voice: 'sine', beat: 0.85, gain: 0.15,
+    notes: [[196,2],[220,2],[247,2],[262,2],[247,1.5],[220,1.5],[196,3],[175,2],[196,2],[220,2],[196,4]]
+  }
+};
+
+function selectLullaby(el) {
+  document.querySelectorAll('#lullabyGrid .sound-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  state.currentLullaby = el.dataset.lullaby;
+  const names = {
+    twinkle:'Twinkle Twinkle Little Star', brahms:"Brahms' Lullaby",
+    rockaby:'Rock-a-bye Baby', hush:'Hush Little Baby',
+    areyou:'Are You Sleeping (Frère Jacques)', lavender:"Lavender's Blue",
+    allthe:'All the Pretty Little Horses', softbox:'Soft Music Box',
+    pentatonic:'Gentle Pentatonic', oceanlull:'Ocean Lullaby'
+  };
+  document.getElementById('lullabyNow').textContent = 'Selected: ' + (names[state.currentLullaby] || state.currentLullaby);
+}
+function setLullabyVol(v) {
+  state.lullabyVol = v / 100;
+  document.getElementById('lullabyVolLbl').textContent = v + '%';
+}
+function toggleLullaby() {
+  if (state.lullabyNodes || state.lullabyInterval) {
+    stopLullaby();
+    return;
+  }
+  startLullaby(state.currentLullaby);
+}
+
+function startLullaby(id) {
+  stopLullaby();
+  const spec = LULLABY_MELODIES[id] || LULLABY_MELODIES.twinkle;
+  const ctx = ensureAudio();
+  const beat = spec.beat;
+  const notes = spec.notes;
+  let noteIndex = 0;
+
+  function playNext() {
+    if (!state.lullabyInterval) return;
+    const [freq, beats] = notes[noteIndex % notes.length];
+    const dur = beats * beat;
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = spec.voice || 'sine';
+    // softbox / square need lower volume already in gain
+    osc.frequency.value = freq;
+    const now = ctx.currentTime;
+    const vol = state.lullabyVol * (spec.gain || 0.18);
+    g.gain.setValueAtTime(0, now);
+    g.gain.linearRampToValueAtTime(vol, now + 0.05);
+    g.gain.setValueAtTime(vol * 0.85, now + dur * 0.65);
+    g.gain.linearRampToValueAtTime(0, now + dur);
+    osc.connect(g); g.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + dur + 0.08);
+    state.lullabyNodes = { osc, gain: g };
+    noteIndex++;
+    state.lullabyTimeout = setTimeout(playNext, dur * 1000);
+  }
+
+  state.lullabyInterval = true;
+  playNext();
+
+  const lb = document.getElementById('playLullabyBtn');
+  if (lb) { lb.textContent = '⏹ Stop'; lb.classList.remove('idle'); lb.classList.add('playing'); }
+  const names = {
+    twinkle:'Twinkle Twinkle', brahms:"Brahms' Lullaby", rockaby:'Rock-a-bye Baby',
+    hush:'Hush Little Baby', areyou:'Are You Sleeping', lavender:"Lavender's Blue",
+    allthe:'Pretty Horses', softbox:'Music Box', pentatonic:'Pentatonic', oceanlull:'Ocean Lullaby'
+  };
+  document.getElementById('lullabyNow').textContent = 'Playing: ' + (names[id] || id);
+
+  const mins = +document.getElementById('lullabyTimer').value;
+  if (mins > 0) {
+    clearTimeout(state.lullabyTimerId);
+    state.lullabyTimerId = setTimeout(() => {
+      stopLullaby();
+      toast('Lullaby finished – sweet dreams');
+    }, mins * 60 * 1000);
+  }
+}
+
+function stopLullaby() {
+  clearTimeout(state.lullabyTimerId);
+  clearTimeout(state.lullabyTimeout);
+  state.lullabyInterval = null;
+  if (state.lullabyNodes) {
+    try { state.lullabyNodes.osc.stop(); } catch(e) {}
+    state.lullabyNodes = null;
+  }
+  const lb=document.getElementById('playLullabyBtn'); if(lb){lb.textContent='▶ Play'; lb.classList.remove('playing'); lb.classList.add('idle');}
+  document.getElementById('lullabyNow').textContent = state.currentLullaby
+    ? 'Selected: ' + state.currentLullaby
+    : '';
+}
+
+// ---------- Frequency Healing ----------
+function setHealVol(v) {
+  state.healVol = v/100;
+  document.getElementById('healVolLbl').textContent = v+'%';
+  if (state.healOsc?.gain) state.healOsc.gain.gain.value = state.healVol * 0.35;
+}
+function toggleHeal() {
+  if (state.healOsc) { stopHeal(); return; }
+  if (!state.currentHeal) { toast('Select a frequency first'); return; }
+  startHeal(state.currentHeal);
+}
+function startHeal(f) {
+  stopHeal();
+  const ctx = ensureAudio();
+  const mode = document.getElementById('healMode').value;
+  const vol = state.healVol * 0.35;
+
+  if (f.hz === 0) {
+    // brown-ish noise
+    const bufferSize = 2*ctx.sampleRate;
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    let last = 0;
+    for (let i=0;i<bufferSize;i++) {
+      const white = Math.random()*2-1;
+      data[i] = (last + (0.02*white)) / 1.02;
+      last = data[i];
+      data[i] *= 3.5;
+    }
+    const src = ctx.createBufferSource();
+    src.buffer = buffer; src.loop = true;
+    const g = ctx.createGain(); g.gain.value = vol;
+    src.connect(g); g.connect(ctx.destination); src.start();
+    state.healOsc = {src, gain:g, type:'noise'};
+  } else if (mode === 'binaural' && f.hz > 20) {
+    // two slightly detuned oscillators
+    const oscL = ctx.createOscillator();
+    const oscR = ctx.createOscillator();
+    const g = ctx.createGain();
+    const merger = ctx.createChannelMerger(2);
+    oscL.type = 'sine'; oscR.type = 'sine';
+    oscL.frequency.value = f.hz;
+    oscR.frequency.value = f.hz + 4; // 4 Hz beat
+    g.gain.value = vol * 0.7;
+    oscL.connect(merger, 0, 0);
+    oscR.connect(merger, 0, 1);
+    merger.connect(g); g.connect(ctx.destination);
+    oscL.start(); oscR.start();
+    state.healOsc = {oscL, oscR, gain:g, type:'binaural'};
+  } else if (mode === 'pulse') {
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = f.hz < 20 ? f.hz * 40 : f.hz; // audible for low brainwave
+    g.gain.value = 0;
+    osc.connect(g); g.connect(ctx.destination);
+    osc.start();
+    // isochronic pulse ~2-4 Hz
+    const pulseRate = f.hz < 20 ? 2 : 3;
+    state.healPulse = setInterval(() => {
+      if (!state.healOsc) return;
+      const t = ctx.currentTime;
+      g.gain.cancelScheduledValues(t);
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(vol, t+0.05);
+      g.gain.linearRampToValueAtTime(0, t+0.2);
+    }, 1000/pulseRate);
+    state.healOsc = {osc, gain:g, type:'pulse'};
+  } else {
+    // pure continuous
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = 'sine';
+    // make very low frequencies audible by using a carrier
+    const freq = f.hz < 30 ? f.hz * 50 : f.hz;
+    osc.frequency.value = freq;
+    g.gain.value = vol;
+    osc.connect(g); g.connect(ctx.destination);
+    osc.start();
+    state.healOsc = {osc, gain:g, type:'pure'};
+  }
+
+  const hb=document.getElementById('playHealBtn'); if(hb){hb.textContent='⏹ Stop'; hb.classList.remove('heal-idle'); hb.classList.add('playing');}
+  document.getElementById('healNowPlaying').textContent = `Playing: ${f.hz?f.hz+' Hz':'Noise'} – ${f.name}`;
+
+  const mins = +document.getElementById('healTimer').value;
+  if (mins > 0) {
+    clearTimeout(state.healTimerId);
+    state.healTimerId = setTimeout(() => { stopHeal(); toast('Healing session finished'); }, mins*60*1000);
+  }
+}
+function stopHeal() {
+  clearTimeout(state.healTimerId);
+  clearInterval(state.healPulse);
+  if (state.healOsc) {
+    try {
+      if (state.healOsc.src) state.healOsc.src.stop();
+      if (state.healOsc.osc) state.healOsc.osc.stop();
+      if (state.healOsc.oscL) state.healOsc.oscL.stop();
+      if (state.healOsc.oscR) state.healOsc.oscR.stop();
+    } catch(e){}
+    state.healOsc = null;
+  }
+  const hb=document.getElementById('playHealBtn'); if(hb){hb.textContent='▶ Play'; hb.classList.remove('playing'); hb.classList.add('heal-idle');}
+  document.getElementById('healNowPlaying').textContent = state.currentHeal
+    ? `Selected: ${state.currentHeal.hz?state.currentHeal.hz+' Hz':'Noise'} – ${state.currentHeal.name}`
+    : '';
+}
+
+
+// ---------- Binaural Beats ----------
+const BINAURAL_PRESETS = {
+  delta2:  { beat: 2,  carrier: 200, label: 'Delta 2 Hz – Deep sleep' },
+  delta3:  { beat: 3,  carrier: 200, label: 'Delta 3 Hz – Deep sleep' },
+  theta4:  { beat: 4,  carrier: 220, label: 'Theta 4 Hz – Sleep onset' },
+  theta6:  { beat: 6,  carrier: 220, label: 'Theta 6 Hz – Drowsy / meditate' },
+  alpha8:  { beat: 8,  carrier: 240, label: 'Alpha 8 Hz – Calm focus' },
+  alpha10: { beat: 10, carrier: 240, label: 'Alpha 10 Hz – Relaxed alert' }
+};
+
+function selectBinaural(el) {
+  document.querySelectorAll('#binauralGrid .sound-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  state.currentBin = el.dataset.bin;
+  const p = BINAURAL_PRESETS[state.currentBin];
+  document.getElementById('binNow').textContent = p ? 'Selected: ' + p.label + ' (headphones required)' : '';
+}
+function setBinVol(v) {
+  state.binVol = v / 100;
+  document.getElementById('binVolLbl').textContent = v + '%';
+  if (state.binNodes?.gain) state.binNodes.gain.gain.value = state.binVol * 0.28;
+}
+function toggleBinaural() {
+  if (state.binNodes) { stopBinaural(); return; }
+  startBinaural(state.currentBin);
+}
+function startBinaural(id) {
+  stopBinaural();
+  const preset = BINAURAL_PRESETS[id] || BINAURAL_PRESETS.theta4;
+  const ctx = ensureAudio();
+  const oscL = ctx.createOscillator();
+  const oscR = ctx.createOscillator();
+  const g = ctx.createGain();
+  const merger = ctx.createChannelMerger(2);
+  oscL.type = 'sine';
+  oscR.type = 'sine';
+  oscL.frequency.value = preset.carrier;
+  oscR.frequency.value = preset.carrier + preset.beat;
+  g.gain.value = state.binVol * 0.28;
+  oscL.connect(merger, 0, 0);
+  oscR.connect(merger, 0, 1);
+  merger.connect(g);
+  g.connect(ctx.destination);
+  oscL.start();
+  oscR.start();
+  state.binNodes = { oscL, oscR, gain: g };
+  const bb=document.getElementById('playBinBtn'); if(bb){bb.textContent='⏹ Stop'; bb.classList.remove('heal-idle'); bb.classList.add('playing');}
+  document.getElementById('binNow').textContent = 'Playing: ' + preset.label + ' · Use headphones';
+  const mins = +document.getElementById('binTimer').value;
+  if (mins > 0) {
+    clearTimeout(state.binTimerId);
+    state.binTimerId = setTimeout(() => {
+      stopBinaural();
+      toast('Binaural session finished');
+    }, mins * 60 * 1000);
+  }
+}
+function stopBinaural() {
+  clearTimeout(state.binTimerId);
+  if (state.binNodes) {
+    try {
+      state.binNodes.oscL.stop();
+      state.binNodes.oscR.stop();
+    } catch(e) {}
+    state.binNodes = null;
+  }
+  const bb=document.getElementById('playBinBtn'); if(bb){bb.textContent='▶ Play'; bb.classList.remove('playing'); bb.classList.add('heal-idle');}
+  const p = BINAURAL_PRESETS[state.currentBin];
+  document.getElementById('binNow').textContent = p ? 'Selected: ' + p.label + ' (headphones required)' : '';
+}
+
+// ---------- Timer & Stopwatch ----------
+function startTimer() {
+  if (state.timerInterval) return;
+  if (state.timerPaused) {
+    const min = +document.getElementById('timerMin').value||0;
+    const sec = +document.getElementById('timerSec').value||0;
+    if (state.timerRemaining <= 0) state.timerRemaining = min*60+sec;
+  }
+  state.timerPaused = false;
+  state.timerInterval = setInterval(() => {
+    if (state.timerRemaining <= 0) {
+      clearInterval(state.timerInterval); state.timerInterval=null;
+      document.getElementById('timerDisplay').textContent='00:00';
+      toast('⏰ Timer done');
+      if (navigator.vibrate) navigator.vibrate([300,100,300]);
+      const ctx=ensureAudio(); const o=ctx.createOscillator(); const g=ctx.createGain();
+      o.frequency.value=880; g.gain.value=0.25; o.connect(g); g.connect(ctx.destination);
+      o.start(); o.stop(ctx.currentTime+0.4);
+      return;
+    }
+    state.timerRemaining--;
+    const m=String(Math.floor(state.timerRemaining/60)).padStart(2,'0');
+    const s=String(state.timerRemaining%60).padStart(2,'0');
+    document.getElementById('timerDisplay').textContent=`${m}:${s}`;
+  },1000);
+}
+function pauseTimer(){ clearInterval(state.timerInterval); state.timerInterval=null; state.timerPaused=true; }
+function resetTimer(){
+  pauseTimer(); state.timerRemaining=0;
+  const min=+document.getElementById('timerMin').value||0;
+  const sec=+document.getElementById('timerSec').value||0;
+  document.getElementById('timerDisplay').textContent=`${String(min).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+}
+function startSW(){
+  if(state.swRunning)return; state.swRunning=true;
+  const start=Date.now()-state.swTime;
+  state.swInterval=setInterval(()=>{
+    state.swTime=Date.now()-start;
+    const t=state.swTime;
+    const h=String(Math.floor(t/3600000)).padStart(2,'0');
+    const m=String(Math.floor((t%3600000)/60000)).padStart(2,'0');
+    const s=String(Math.floor((t%60000)/1000)).padStart(2,'0');
+    const cs=String(Math.floor((t%1000)/10)).padStart(2,'0');
+    document.getElementById('swDisplay').textContent=`${h}:${m}:${s}.${cs}`;
+  },30);
+}
+function pauseSW(){clearInterval(state.swInterval);state.swRunning=false}
+function resetSW(){pauseSW();state.swTime=0;document.getElementById('swDisplay').textContent='00:00:00.00'}
+
+
+
+
+
+
+// ---------- Sacred Sounds (Islamic · Biblical · Sanatani · General) ----------
+const SACRED_PRESETS = {
+  // Islamic — soft low drones & gentle pulse (placeholders for real recitations)
+  isl_allah:   { label: 'Islamic · Allah soft tone', freqs: [110, 165], pulse: true, wave: 'sine' },
+  isl_dhikr:   { label: 'Islamic · Dhikr pulse', freqs: [98, 147], pulse: true, wave: 'sine', beatEvery: 1 },
+  isl_salawat: { label: 'Islamic · Salawat ambience', freqs: [123, 185], pulse: false, wave: 'triangle' },
+  isl_heart:   { label: 'Islamic · Heart + drone', freqs: [82], pulse: true, wave: 'sine' },
+
+  // Biblical — warm mid drones
+  bib_psalm:   { label: 'Biblical · Psalm tone', freqs: [131, 196], pulse: false, wave: 'sine' },
+  bib_amen:    { label: 'Biblical · Amen soft', freqs: [147, 220], pulse: true, wave: 'triangle' },
+  bib_peace:   { label: 'Biblical · Peace drone', freqs: [98, 147, 196], pulse: false, wave: 'sine' },
+  bib_heart:   { label: 'Biblical · Heart + drone', freqs: [87], pulse: true, wave: 'sine' },
+
+  // Sanatani — Om-like & mantra rhythm tones
+  san_om:      { label: 'Sanatani · Om', freqs: [136.1], pulse: false, wave: 'sine', om: true },
+  san_shiva:   { label: 'Sanatani · Namah Shivaya tone', freqs: [128, 160, 192], pulse: true, wave: 'sine', beatEvery: 5 },
+  san_shanti:  { label: 'Sanatani · Om Shanti', freqs: [144, 216], pulse: true, wave: 'triangle', beatEvery: 3 },
+  san_sohum:   { label: 'Sanatani · So Hum breath', freqs: [120], pulse: true, wave: 'sine', breath: true },
+  san_ganesha: { label: 'Sanatani · Gam soft', freqs: [152, 228], pulse: false, wave: 'triangle' },
+  san_heart:   { label: 'Sanatani · Heart + drone', freqs: [90], pulse: true, wave: 'sine' },
+
+  // General
+  gen_om:      { label: 'General · Universal Om', freqs: [136.1], pulse: false, wave: 'sine', om: true },
+  gen_peace:   { label: 'General · Peace tone', freqs: [108, 162], pulse: false, wave: 'sine' },
+  gen_breath:  { label: 'General · Breath pulse', freqs: [100], pulse: true, wave: 'sine', breath: true },
+  gen_silence: { label: 'General · Near silence', freqs: [60], pulse: false, wave: 'sine', veryQuiet: true },
+  gen_heart:   { label: 'General · Heartbeat only', freqs: [], pulse: true, wave: 'sine' }
+};
+
+function selectSacred(el) {
+  document.querySelectorAll('#panel-sacred .sound-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  state.currentSacred = el.dataset.sacred;
+  const s = SACRED_PRESETS[state.currentSacred];
+  document.getElementById('sacredNow').textContent = s ? 'Selected: ' + s.label : '';
+}
+function setSacredVol(v) {
+  state.sacredVol = v / 100;
+  document.getElementById('sacredVolLbl').textContent = v + '%';
+  if (state.sacredNodes && state.sacredNodes.master) {
+    const quiet = SACRED_PRESETS[state.currentSacred]?.veryQuiet ? 0.15 : 1;
+    state.sacredNodes.master.gain.value = state.sacredVol * 0.25 * quiet;
+  }
+}
+function toggleSacred() {
+  if (state.sacredNodes || state.sacredInterval) {
+    stopSacred();
+    return;
+  }
+  startSacred(state.currentSacred);
+}
+
+function sacredHeartbeat(ctx, vol) {
+  const now = ctx.currentTime;
+  function thump(t, freq, g0, dur) {
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    const f = ctx.createBiquadFilter();
+    o.type = 'sine';
+    f.type = 'lowpass';
+    f.frequency.value = 160;
+    o.frequency.setValueAtTime(freq, t);
+    o.frequency.exponentialRampToValueAtTime(Math.max(25, freq * 0.45), t + dur);
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(g0, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+    o.connect(f); f.connect(g); g.connect(ctx.destination);
+    o.start(t); o.stop(t + dur + 0.05);
+  }
+  thump(now, 58, vol * 0.4, 0.2);
+  thump(now + 0.17, 46, vol * 0.25, 0.18);
+}
+
+function startSacred(id) {
+  stopSacred();
+  const spec = SACRED_PRESETS[id] || SACRED_PRESETS.san_om;
+  const ctx = ensureAudio();
+  const vol = state.sacredVol;
+  const quiet = spec.veryQuiet ? 0.15 : 1;
+  const master = ctx.createGain();
+  master.gain.value = vol * 0.25 * quiet;
+  master.connect(ctx.destination);
+
+  const oscs = [];
+  (spec.freqs || []).forEach((freq, i) => {
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = spec.wave || 'sine';
+    o.frequency.value = freq;
+    // Om-like: slight detune second harmonic feel
+    if (spec.om && i === 0) {
+      const o2 = ctx.createOscillator();
+      const g2 = ctx.createGain();
+      o2.type = 'sine';
+      o2.frequency.value = freq * 2;
+      g2.gain.value = 0.2;
+      o2.connect(g2); g2.connect(master);
+      o2.start();
+      oscs.push(o2);
+    }
+    g.gain.value = 1 / Math.max(1, spec.freqs.length);
+    o.connect(g); g.connect(master);
+    o.start();
+    oscs.push(o);
+  });
+
+  state.sacredNodes = { oscs, master };
+
+  const bpm = +(document.getElementById('sacredBpm')?.value || 66);
+  const intervalMs = Math.round(60000 / bpm);
+
+  if (spec.pulse) {
+    // breath style: slower swell
+    if (spec.breath) {
+      const half = intervalMs * 2;
+      state.sacredInterval = setInterval(() => {
+        if (!state.sacredNodes) return;
+        const now = ctx.currentTime;
+        master.gain.cancelScheduledValues(now);
+        master.gain.linearRampToValueAtTime(vol * 0.32 * quiet, now + half / 2000);
+        master.gain.linearRampToValueAtTime(vol * 0.12 * quiet, now + half / 1000);
+      }, half);
+    } else {
+      sacredHeartbeat(ctx, vol * 0.8);
+      state.sacredInterval = setInterval(() => {
+        sacredHeartbeat(ctx, state.sacredVol * 0.8);
+      }, intervalMs);
+    }
+  }
+
+  const btn = document.getElementById('playSacredBtn');
+  if (btn) {
+    btn.textContent = '⏹ Stop';
+    btn.classList.remove('heal-idle');
+    btn.classList.add('playing');
+  }
+  document.getElementById('sacredNow').textContent = 'Playing: ' + spec.label;
+
+  const mins = +(document.getElementById('sacredTimer')?.value || 0);
+  if (mins > 0) {
+    clearTimeout(state.sacredTimerId);
+    state.sacredTimerId = setTimeout(() => {
+      stopSacred();
+      toast('Sacred session finished');
+    }, mins * 60 * 1000);
+  }
+}
+
+function stopSacred() {
+  clearInterval(state.sacredInterval);
+  state.sacredInterval = null;
+  clearTimeout(state.sacredTimerId);
+  if (state.sacredNodes) {
+    try {
+      (state.sacredNodes.oscs || []).forEach(o => { try { o.stop(); } catch(e) {} });
+    } catch(e) {}
+    state.sacredNodes = null;
+  }
+  const btn = document.getElementById('playSacredBtn');
+  if (btn) {
+    btn.textContent = '▶ Play';
+    btn.classList.remove('playing');
+    btn.classList.add('heal-idle');
+  }
+  const s = SACRED_PRESETS[state.currentSacred];
+  const el = document.getElementById('sacredNow');
+  if (el) el.textContent = s ? 'Selected: ' + s.label : '';
+}
+
+// ---------- Profile ----------
+const PROFILE_KEY = 'smartalarm_profile';
+const IMGBB_KEY = 'smartalarm_imgbb_key';
+
+function loadProfile() {
+  try {
+    const raw = localStorage.getItem(PROFILE_KEY);
+    const pr = raw ? JSON.parse(raw) : {};
+    const nameEl = document.getElementById('profName');
+    const ageEl = document.getElementById('profAge');
+    const genderEl = document.getElementById('profGender');
+    const bioEl = document.getElementById('profBio');
+    if (nameEl) nameEl.value = pr.name || '';
+    if (ageEl) ageEl.value = pr.age || '';
+    if (genderEl) genderEl.value = pr.gender || '';
+    if (bioEl) bioEl.value = pr.bio || '';
+    applyProfilePhoto(pr);
+    refreshProfileHeader(pr);
+    const key = localStorage.getItem(IMGBB_KEY) || '';
+    const keyInput = document.getElementById('imgbbKey');
+    if (keyInput && key) keyInput.placeholder = '•••• key saved on this device';
+    const st = document.getElementById('imgbbKeyStatus');
+    if (st) st.textContent = key ? 'Cloud upload ready (key saved locally)' : 'No cloud key — photos stay on device only';
+    const cps = document.getElementById('cloudPhotoStatus');
+    if (cps) {
+      if (pr.cloudUrl) cps.innerHTML = '☁️ Cloud photo linked';
+      else if (pr.photo) cps.textContent = 'Saved on this device';
+      else cps.textContent = '';
+    }
+  } catch (e) { console.warn(e); }
+}
+
+function applyProfilePhoto(pr) {
+  const img = document.getElementById('profilePhotoImg');
+  const emoji = document.getElementById('profilePhotoEmoji');
+  if (!img || !emoji) return;
+  const src = pr.cloudUrl || pr.photo || '';
+  if (src) {
+    img.src = src;
+    img.style.display = 'block';
+    emoji.style.display = 'none';
+  } else {
+    img.removeAttribute('src');
+    img.style.display = 'none';
+    emoji.style.display = 'inline';
+  }
+}
+
+function refreshProfileHeader(pr) {
+  pr = pr || {};
+  const name = (pr.name || '').trim() || 'Your Name';
+  const nd = document.getElementById('profileNameDisplay');
+  if (nd) nd.textContent = name;
+  const bits = [];
+  if (pr.age) bits.push(pr.age + ' yrs');
+  if (pr.gender) bits.push(pr.gender.charAt(0).toUpperCase() + pr.gender.slice(1));
+  if (pr.bio) bits.push(pr.bio);
+  const md = document.getElementById('profileMetaDisplay');
+  if (md) md.textContent = bits.length ? bits.join(' · ') : 'Set up your profile below';
+}
+
+function getProfileObjectFromForm() {
+  return {
+    name: (document.getElementById('profName').value || '').trim(),
+    age: document.getElementById('profAge').value || '',
+    gender: document.getElementById('profGender').value || '',
+    bio: (document.getElementById('profBio').value || '').trim()
+  };
+}
+
+function saveProfile() {
+  let pr = {};
+  try { pr = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}'); } catch(e) {}
+  Object.assign(pr, getProfileObjectFromForm());
+  localStorage.setItem(PROFILE_KEY, JSON.stringify(pr));
+  refreshProfileHeader(pr);
+  toast('Profile saved ✓');
+}
+
+function saveImgbbKey() {
+  const v = (document.getElementById('imgbbKey').value || '').trim();
+  if (!v) { toast('Enter an API key first'); return; }
+  localStorage.setItem(IMGBB_KEY, v);
+  document.getElementById('imgbbKey').value = '';
+  document.getElementById('imgbbKey').placeholder = '•••• key saved on this device';
+  document.getElementById('imgbbKeyStatus').textContent = 'Cloud upload ready (key saved locally)';
+  toast('API key saved on this device only');
+}
+function clearImgbbKey() {
+  localStorage.removeItem(IMGBB_KEY);
+  const el = document.getElementById('imgbbKey');
+  if (el) { el.value = ''; el.placeholder = 'Paste API key for cloud photos'; }
+  document.getElementById('imgbbKeyStatus').textContent = 'No cloud key — photos stay on device only';
+  toast('Cloud key cleared');
+}
+
+/** Compress image to JPEG data URL (max edge 512px) */
+function compressImageFile(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = reject;
+      img.onload = () => {
+        const max = 512;
+        let w = img.width, h = img.height;
+        if (w > max || h > max) {
+          if (w > h) { h = Math.round(h * max / w); w = max; }
+          else { w = Math.round(w * max / h); h = max; }
         }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', 0.82));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
 
-        document.getElementById('alarmModal').style.display = 'flex';
-    }
+async function uploadToImgBB(dataUrl) {
+  const key = localStorage.getItem(IMGBB_KEY);
+  if (!key) return null;
+  // strip data URL prefix
+  const base64 = dataUrl.replace(/^data:image\/\w+;base64,/, '');
+  const form = new FormData();
+  form.append('image', base64);
+  form.append('name', 'smartalarm-profile');
+  const res = await fetch('https://api.imgbb.com/1/upload?key=' + encodeURIComponent(key), {
+    method: 'POST',
+    body: form
+  });
+  if (!res.ok) throw new Error('Upload failed (' + res.status + ')');
+  const json = await res.json();
+  if (!json.success) throw new Error(json.error?.message || 'Upload failed');
+  return {
+    url: json.data.display_url || json.data.url,
+    deleteUrl: json.data.delete_url || null
+  };
+}
 
-    function registerShake() {
-        if (currentMissionType === 'shake') {
-            missionTargetValue--;
-            document.getElementById('shakeCount').textContent = `Shakes left: ${missionTargetValue}`;
-            if (missionTargetValue <= 0) {
-                closeAlarmModal();
-            }
+async function onPhotoSelected(ev) {
+  const file = ev.target.files && ev.target.files[0];
+  if (!file) return;
+  if (!file.type.startsWith('image/')) { toast('Please choose an image'); return; }
+  toast('Processing photo…');
+  try {
+    const dataUrl = await compressImageFile(file);
+    const img = document.getElementById('profilePhotoImg');
+    const emoji = document.getElementById('profilePhotoEmoji');
+    img.src = dataUrl;
+    img.style.display = 'block';
+    emoji.style.display = 'none';
+
+    let pr = {};
+    try { pr = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}'); } catch(e) {}
+    pr.photo = dataUrl;
+    pr.cloudUrl = null;
+
+    const key = localStorage.getItem(IMGBB_KEY);
+    const cps = document.getElementById('cloudPhotoStatus');
+    if (key) {
+      if (cps) cps.textContent = 'Uploading to cloud…';
+      try {
+        const cloud = await uploadToImgBB(dataUrl);
+        if (cloud && cloud.url) {
+          pr.cloudUrl = cloud.url;
+          pr.cloudDelete = cloud.deleteUrl;
+          // prefer cloud URL for display to save local storage space
+          img.src = cloud.url;
+          if (cps) cps.textContent = '☁️ Uploaded to secure cloud (HTTPS)';
+          toast('Photo uploaded to cloud');
         }
+      } catch (err) {
+        console.warn(err);
+        if (cps) cps.textContent = 'Cloud upload failed — saved on device';
+        toast('Cloud upload failed — saved locally');
+      }
+    } else {
+      if (cps) cps.textContent = 'Saved on this device';
+      toast('Photo saved on device');
     }
+    Object.assign(pr, getProfileObjectFromForm());
+    localStorage.setItem(PROFILE_KEY, JSON.stringify(pr));
+    refreshProfileHeader(pr);
+  } catch (e) {
+    console.warn(e);
+    toast('Could not process image');
+  }
+  ev.target.value = '';
+}
 
-    function verifyMission() {
-        let inputVal = document.getElementById('missionInput').value.trim();
-        if (currentMissionType === 'math' && parseInt(inputVal) === missionTargetValue) {
-            closeAlarmModal();
-        } else if (currentMissionType === 'type' && inputVal.toUpperCase() === missionTargetValue) {
-            closeAlarmModal();
-        } else {
-            alert(currentLang === 'hi' ? 'गलत उत्तर! पुनः प्रयास करें।' : 'Incorrect! Try again.');
-        }
-    }
+function buildShareText() {
+  let pr = {};
+  try { pr = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}'); } catch(e) {}
+  const name = pr.name || 'I';
+  const streak = state.stats.streak || 0;
+  const success = state.stats.totalTriggered
+    ? Math.round(state.stats.totalDismissed / state.stats.totalTriggered * 100) : 0;
+  return `${name} is on a ${streak}-day wake-up streak with SmartAlarm (${success}% success). Beating the snooze button one morning at a time ⏰🔥`;
+}
 
-    function closeAlarmModal() {
-        document.getElementById('alarmModal').style.display = 'none';
-        if (ringingAlarmIndex !== null) {
-            alarms[ringingAlarmIndex].active = false;
-            ringingAlarmIndex = null;
-            updateAlarmUI();
-        }
+async function shareNative() {
+  const text = buildShareText();
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: 'SmartAlarm', text });
+      return;
+    } catch (e) {
+      if (e.name === 'AbortError') return;
     }
+  }
+  shareCopy();
+}
+function shareCopy() {
+  const text = buildShareText();
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => toast('Copied to clipboard')).catch(() => fallbackCopy(text));
+  } else fallbackCopy(text);
+}
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); toast('Copied'); } catch(e) { toast('Copy failed'); }
+  document.body.removeChild(ta);
+}
+function shareTwitter() {
+  const text = buildShareText();
+  window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text), '_blank', 'noopener');
+}
+function shareWhatsApp() {
+  const text = buildShareText();
+  window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank', 'noopener');
+}
 
-    function addAlarm() {
-        let time = document.getElementById('alarmTimeInput').value;
-        let label = document.getElementById('alarmLabelInput').value.trim() || 'Alarm';
-        let sound = document.getElementById('alarmSoundSelect').value;
-        let mission = document.getElementById('alarmMissionSelect').value;
-        if (!time) return;
+// ---------- Stats ----------
+function updateStatsUI(){
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  set('statStreak', state.stats.streak);
+  set('statTotal', state.stats.totalDismissed);
+  set('statSnooze', state.stats.totalSnoozes);
+  const rate = state.stats.totalTriggered ? Math.round(state.stats.totalDismissed / state.stats.totalTriggered * 100) : 0;
+  set('statSuccess', rate + '%');
+  set('streakBadge', `🔥 ${state.stats.streak} day streak`);
+}
+function resetStats(){
+  if(!confirm('Reset stats?'))return;
+  state.stats={streak:0,lastSuccessDate:null,totalDismissed:0,totalSnoozes:0,totalTriggered:0};
+  save();updateStatsUI();
+}
+function exportData(){
+  const blob=new Blob([JSON.stringify(state.alarms,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='smartalarm-alarms.json';a.click();
+  URL.revokeObjectURL(url);
+}
+function toggleNightstand(){
+  document.body.classList.toggle('nightstand');
+  const on = document.body.classList.contains('nightstand');
+  if (on) {
+    toast('Nightstand on — tap 🌙 to exit');
+    // keep screen awake if possible
+    if (navigator.wakeLock) navigator.wakeLock.request('screen').catch(()=>{});
+  } else {
+    toast('Nightstand off');
+  }
+}
+function changeLanguage(lang){
+  localStorage.setItem('smart_alarm_lang',lang);
+  const titles={en:'SmartAlarm',hi:'स्मार्ट अलार्म',ar:'منبه ذكي'};
+  document.getElementById('appTitle').textContent=titles[lang]||titles.en;
+}
+function finishOnboard(){
+  localStorage.setItem(ONBOARD_KEY,'1');
+  document.getElementById('onboard').classList.add('hidden');
+  switchTab('alarms',document.querySelector('[data-tab=alarms]'));
+}
 
-        alarms.push({ time, label, sound, mission, active: true });
-        document.getElementById('alarmTimeInput').value = '';
-        document.getElementById('alarmLabelInput').value = '';
-        updateAlarmUI();
-    }
 
-    function toggleAlarm(index) {
-        alarms[index].active = !alarms[index].active;
-        updateAlarmUI();
-    }
+// ---------- App Lock (PIN) ----------
+let pinBuffer = '';
+const PIN_KEY = 'smartalarm_pin';
+const LOCK_KEY = 'smartalarm_lock_on';
 
-    function deleteAlarm(index) {
-        alarms.splice(index, 1);
-        updateAlarmUI();
+function toggleAppLockSetting(on) {
+  localStorage.setItem(LOCK_KEY, on ? '1' : '0');
+  if (on && !localStorage.getItem(PIN_KEY)) setPinPrompt();
+  toast(on ? 'App lock enabled' : 'App lock disabled');
+}
+function setPinPrompt() {
+  const p = prompt('Set a 4-digit PIN (numbers only):');
+  if (!p || !/^\d{4}$/.test(p)) { toast('PIN must be 4 digits'); return; }
+  localStorage.setItem(PIN_KEY, p);
+  localStorage.setItem(LOCK_KEY, '1');
+  const cb = document.getElementById('prefAppLock');
+  if (cb) cb.checked = true;
+  toast('PIN saved');
+}
+function showLockScreen() {
+  if (localStorage.getItem(LOCK_KEY) !== '1') return;
+  if (!localStorage.getItem(PIN_KEY)) return;
+  let overlay = document.getElementById('lockOverlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'lockOverlay';
+    overlay.className = 'lock-overlay show';
+    overlay.innerHTML = `
+      <div style="font-size:2.5rem;margin-bottom:8px">🔒</div>
+      <h2 style="color:var(--gold);margin:0 0 4px">App Locked</h2>
+      <p style="color:var(--muted);font-size:.85rem">Enter your 4-digit PIN</p>
+      <div class="lock-dots" id="lockDots">
+        <div class="lock-dot"></div><div class="lock-dot"></div>
+        <div class="lock-dot"></div><div class="lock-dot"></div>
+      </div>
+      <div class="pin-pad" id="pinPad"></div>
+      <button class="btn-slim btn-ghost" style="margin-top:16px;border:1px solid var(--border);background:transparent;color:var(--muted)" onclick="pinBuffer='';updateLockDots()">Clear</button>`;
+    document.body.appendChild(overlay);
+    const pad = document.getElementById('pinPad');
+    ['1','2','3','4','5','6','7','8','9','','0','⌫'].forEach(k => {
+      const b = document.createElement('button');
+      b.className = 'pin-key';
+      b.textContent = k || '';
+      if (!k) { b.style.visibility = 'hidden'; }
+      else b.onclick = () => pressPin(k);
+      pad.appendChild(b);
+    });
+  } else {
+    overlay.classList.add('show');
+  }
+  pinBuffer = '';
+  updateLockDots();
+}
+function pressPin(k) {
+  if (k === '⌫') { pinBuffer = pinBuffer.slice(0, -1); updateLockDots(); return; }
+  if (pinBuffer.length >= 4) return;
+  pinBuffer += k;
+  updateLockDots();
+  if (pinBuffer.length === 4) {
+    if (pinBuffer === localStorage.getItem(PIN_KEY)) {
+      document.getElementById('lockOverlay').classList.remove('show');
+      pinBuffer = '';
+      toast('Unlocked');
+    } else {
+      toast('Wrong PIN');
+      pinBuffer = '';
+      updateLockDots();
     }
+  }
+}
+function updateLockDots() {
+  const dots = document.querySelectorAll('#lockDots .lock-dot');
+  dots.forEach((d, i) => d.classList.toggle('filled', i < pinBuffer.length));
+}
 
-    function updateAlarmUI() {
-        let html = '';
-        alarms.forEach((alarm, idx) => {
-            html += `
-                <div class="list-card">
-                    <div>
-                        <strong style="font-size: 1.2rem; color: var(--accent-gold);">${alarm.time}</strong>
-                        <span style="color: #94a3b8; font-size: 0.8rem;">${alarm.label} | Mission: ${alarm.mission.toUpperCase()}</span>
-                    </div>
-                    <div style="display: flex; gap: 8px; align-items: center;">
-                        <input type="checkbox" ${alarm.active ? 'checked' : ''} onchange="toggleAlarm(${idx})" style="width: 18px; height: 18px; cursor: pointer; margin: 0;">
-                        <button onclick="deleteAlarm(${idx})" style="background: #ef4444; color: #fff; border: none; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.75rem;">Del</button>
-                    </div>
-                </div>
-            `;
-        });
-        document.getElementById('alarmListContainer').innerHTML = html || '<p style="text-align:center; color:#94a3b8;">No alarms set.</p>';
-        localStorage.setItem('smart_alarm_list', JSON.stringify(alarms));
-    }
-
-    // White noise audio simulator toggle
-    let isPlayingNoise = false;
-    function toggleWhiteNoise() {
-        isPlayingNoise = !isPlayingNoise;
-        let btn = document.getElementById('noiseToggleBtn');
-        if (isPlayingNoise) {
-            btn.textContent = currentLang === 'hi' ? 'साउंडस्केप बंद करें' : 'Stop Soundscape';
-            btn.style.background = '#ef4444';
-            btn.style.color = '#fff';
-        } else {
-            btn.textContent = currentLang === 'hi' ? 'साउंडस्केप चलाएं' : 'Play Soundscape';
-            btn.style.background = '#34d399';
-            btn.style.color = '#0f172a';
-        }
-    }
-
-    // Stopwatch logic with Milliseconds
-    let swTime = 0, swInterval = null;
-    function startStopwatch() {
-        if (!swInterval) {
-            let startTime = Date.now() - swTime;
-            swInterval = setInterval(() => {
-                swTime = Date.now() - startTime;
-                let hrs = String(Math.floor(swTime / 3600000)).padStart(2, '0');
-                let mins = String(Math.floor((swTime % 3600000) / 60000)).padStart(2, '0');
-                let secs = String(Math.floor((swTime % 60000) / 1000)).padStart(2, '0');
-                let ms = String(Math.floor((swTime % 1000) / 10)).padStart(2, '0');
-                document.getElementById('stopwatchDisplay').textContent = `${hrs}:${mins}:${secs}.${ms}`;
-            }, 10);
-        }
-    }
-    function pauseStopwatch() {
-        clearInterval(swInterval);
-        swInterval = null;
-    }
-    function resetStopwatch() {
-        pauseStopwatch();
-        swTime = 0;
-        document.getElementById('stopwatchDisplay').textContent = "00:00:00.00";
-    }
-
-    updateAlarmUI();
-    applyTranslations();
+// ---------- Init ----------
+load();
+populateAlarmSounds();
+buildFreqGrids();
+renderAlarms();
+updateStatsUI();
+tick();
+if(!localStorage.getItem(ONBOARD_KEY)) document.getElementById('onboard').classList.remove('hidden');
+else document.getElementById('onboard').classList.add('hidden');
+// App lock on open
+loadProfile();
+if (localStorage.getItem(LOCK_KEY) === '1') setTimeout(showLockScreen, 300);
+document.getElementById('clockCard').addEventListener('click', function() {
+  if (document.body.classList.contains('nightstand')) toggleNightstand();
+});
+const lockCb = document.getElementById('prefAppLock');
+if (lockCb) lockCb.checked = localStorage.getItem(LOCK_KEY) === '1';
+const savedLang=localStorage.getItem('smart_alarm_lang')||'en';
+document.getElementById('langSelect').value=savedLang;
+changeLanguage(savedLang);
 </script>
-
 </body>
 </html>
